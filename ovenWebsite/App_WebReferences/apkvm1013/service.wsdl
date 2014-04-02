@@ -1,0 +1,1264 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://tempuri.org/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://tempuri.org/">
+      <s:element name="HelloWorld">
+        <s:complexType />
+      </s:element>
+      <s:element name="HelloWorldResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="HelloWorldResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getCompleteLotData">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="transportLotID" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getCompleteLotDataResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="getCompleteLotDataResult" type="tns:CompleteLotDataProxy" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="CompleteLotDataProxy">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Package_ACS" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Qty" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="DiffusionIDList" type="tns:ArrayOfDiffusionIDProxy" />
+          <s:element minOccurs="0" maxOccurs="1" name="Wire12NC" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="WireDescription" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="WireSize" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="WiringDiagram" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="WiringDiagramDate" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Shoporder" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Duedate" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="GenerateDate" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Holdreasoncode" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Holdstatus" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Materialname" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Ordertype" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Waferbatch" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Wafer2batch" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Wafer3batch" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Wafer4batch" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="LastComment" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="LastComment2" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="LastComment3" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Lotid" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="NextOperationName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Operationname" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="RouteName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Startedqty" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Queuedqty" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Udasecondaryqty" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="WorkState" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Udastartedsecondaryqty" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="BusinessLineName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="DiePerWafer" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="DieSizeX" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="DieSizeY" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Die2SizeX" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Die2SizeY" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Die3SizeX" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Die3SizeY" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Die4SizeX" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Die4SizeY" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="WaferFabCode" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="WaferFabCode2" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="WaferFabCode3" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="WaferFabCode4" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="WaferFabName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="WaferFabName2" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="WaferFabName3" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="WaferFabName4" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="WaferLayoutVersion" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Cept12NC" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="DieThickness" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="DieThickness2" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="DieThickness3" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="DieThickness4" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="BumpHeight" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Inkless" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="SpecialRequest_1" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="SpecialRequest_2" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="WaferMount" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Adhesive" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="AdhesiveDescription" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Adhesive2Description" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Adhesive3Description" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Adhesive4Description" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="BaseTypeName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="WaferSize" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Wafer2Size" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Wafer3Size" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Wafer4Size" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Product" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="WaferTestProgramName1" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="WaferTestProgramName2" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="WaferTestProgramName3" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Pep12NC" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="ErrorNumber" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="ErrorDescription" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="DieLayoutVersion" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="VariationTypeName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="RomCodeName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Lmo" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="LocalTypeName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Package" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="DieDescription" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Die2Description" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Die3Description" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Die4Description" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="DieCode" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="LineType" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="DevelopmentCode" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Customer" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="DiffusionProcess" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ItemGroup" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ProberFile" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="WaferBatchAmount" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="DieAmount" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="DataSourceName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="FinishedProduct" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="FinishedProductDescription" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="TestedWafer" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="TestedWafer2" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="TestedWafer3" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="TestedWafer4" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="TestedWaferDescription" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="UntestedIcOriginal" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="UntestedIcDescriptionOriginal" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="TestedWaferOriginal" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="WaferDescriptionOriginal" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="SubpackageDescription" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PackageOutlineVersion" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="AssemblyCG" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Die" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Die2" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Die3" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Die4" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="WaferNC" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Wafer2NC" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Wafer3NC" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Wafer4NC" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="WaferThickness" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Substrate" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="SubstrateDescription" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="TinFoilThinner" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="TinFoilThinnerDescription" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="HeatSink" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="HeatSinkDescription" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfDiffusionIDProxy">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="DiffusionIDProxy" nillable="true" type="tns:DiffusionIDProxy" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="DiffusionIDProxy">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="DiffusionID" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="getDBEnvironment">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Operation" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getDBEnvironmentResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="getDBEnvironmentResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getAreaList">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Operation" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getAreaListResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="getAreaListResult" type="tns:ArrayOfString" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfString">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="string" nillable="true" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="getMachineGroupList">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Operation" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="areaName" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getMachineGroupListResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="getMachineGroupListResult" type="tns:ArrayOfString" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getMachineList">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Operation" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="areaName" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="machineGroup" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getMachineListResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="getMachineListResult" type="tns:ArrayOfMachineProxy" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfMachineProxy">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="MachineProxy" nillable="true" type="tns:MachineProxy" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="MachineProxy">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="MachineID" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Location" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="CheckBatch">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Operation" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="batchno" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="locations" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="operatorID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="material1" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="material2" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="material3" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CheckBatchResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="CheckBatchResult" type="tns:BatchInputProxy" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="BatchInputProxy">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Result" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ErrorDescription" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="ErrorNumber" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="BatchCardInfo" type="tns:CompleteLotDataProxy" />
+          <s:element minOccurs="0" maxOccurs="1" name="WireInfo" type="tns:ArrayOfWireMSProxy" />
+          <s:element minOccurs="0" maxOccurs="1" name="RMSInfo" type="tns:ArrayOfRMSProxy" />
+          <s:element minOccurs="0" maxOccurs="1" name="WiDiInfo" type="tns:WiDiWHProxy" />
+          <s:element minOccurs="0" maxOccurs="1" name="ACSInfo" type="tns:ArrayOfACSProxy" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfWireMSProxy">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="WireMSProxy" nillable="true" type="tns:WireMSProxy" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="WireMSProxy">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="Match" type="s:boolean" />
+          <s:element minOccurs="0" maxOccurs="1" name="Result" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Batch_No" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Waxis_Id" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Use_Date" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="W12nc" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Wdesc" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Raw_Cnt" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Acs_Machine" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Remark" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ErrorDescription" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="ErrorNumber" type="s:int" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfRMSProxy">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="RMSProxy" nillable="true" type="tns:RMSProxy" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="RMSProxy">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="Match" type="s:boolean" />
+          <s:element minOccurs="0" maxOccurs="1" name="Result" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="MachineID" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="LocationID" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="MC_BPname" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="MC_WoVersionBPname" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="MC_StartTime" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="MC_TypeName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ErrorDescription" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="ErrorNumber" type="s:int" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="WiDiWHProxy">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="BPNAME_WoVersion" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="DOCID" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="APPROVED_DATE" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="EFF_DAYS" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="EFF_DATE" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="MACHINE_MODEL" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="FP_ITEM" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="TYPE_NAME" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="WIDI_ID" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="FILE_ID" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PRGMODEL_DESC" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="LAST_DATE" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="LAST_TIME" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="LAST_USER" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="STATUS" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="APPLIER_EMAIL" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="APPROVER_EMAIL" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="VERSION_ID" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="BPNAME" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="TYPE_FAMILY" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PACKAGE" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="CAPILLARY_TYPE" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="CAPILLARY_LIFE_TIME" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="BPNAME1" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="STAGE1" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="BPNAME2" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="STAGE2" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="BPNAME3" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="STAGE3" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="BPNAME4" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="STAGE4" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="BPNAME5" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="STAGE5" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ASSYUNITTIME" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="CAPILLARY_12NC" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ErrorDescription" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="ErrorNumber" type="s:int" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfACSProxy">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="ACSProxy" nillable="true" type="tns:ACSProxy" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ACSProxy">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="MachineID" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="LocationID" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="MC_Model" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Result_ACSUpdate" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Area_ID" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Sys_Status" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Waxis_Id" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Qty" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ErrorDescription" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="ErrorNumber" type="s:int" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="updateACSBatch">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Operation" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="areaID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="machineID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="batchNo" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="typeName" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="ncCode" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Diffusion" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Package" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="OperatorID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="TotalQty" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Material1" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Material2" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Material3" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Material4" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Stage" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="typeFamily" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="sysStatus" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="updateACSBatchResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="updateACSBatchResult" type="tns:ACSProxy" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getEquipmentInfo">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="locationID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="operation" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getEquipmentInfoResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="getEquipmentInfoResult" type="tns:ACSProxy" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getInitDataInfo">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="batchNo" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="machineID" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getInitDataInfoResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="getInitDataInfoResult" type="tns:PAProxy" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="PAProxy">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Prod_ID" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="MachineModel" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="MachineID" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="LocationID" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="BatchCardNo" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="OperatorID" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Z1_Blade" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Z2_Blade" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Effective" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Approve_Status" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Approve_Date" type="s:dateTime" />
+          <s:element minOccurs="0" maxOccurs="1" name="Sawing_Foil" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Auto_Dressing" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="SMemo" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PPName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="RecipeName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="WaferSize" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ProductName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Product12NC" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Product12NC_Original" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="WaferThickness" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="DieThickness" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="DiffusionNr" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="GUIclientIP" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="EAPInterfaceServerIP" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="EAPInterfaceReturnMsg" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="EAPCellName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="EAPSharingFolder" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ErrorDescription" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="ErrorNumber" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="PPFile" type="s:base64Binary" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="startPARMSLot">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="proxy" type="tns:PAProxy" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="startPARMSLotResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="startPARMSLotResult" type="tns:PAProxy" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="string" nillable="true" type="s:string" />
+      <s:element name="CompleteLotDataProxy" nillable="true" type="tns:CompleteLotDataProxy" />
+      <s:element name="ArrayOfString" nillable="true" type="tns:ArrayOfString" />
+      <s:element name="ArrayOfMachineProxy" nillable="true" type="tns:ArrayOfMachineProxy" />
+      <s:element name="BatchInputProxy" nillable="true" type="tns:BatchInputProxy" />
+      <s:element name="ACSProxy" nillable="true" type="tns:ACSProxy" />
+      <s:element name="PAProxy" nillable="true" type="tns:PAProxy" />
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="HelloWorldSoapIn">
+    <wsdl:part name="parameters" element="tns:HelloWorld" />
+  </wsdl:message>
+  <wsdl:message name="HelloWorldSoapOut">
+    <wsdl:part name="parameters" element="tns:HelloWorldResponse" />
+  </wsdl:message>
+  <wsdl:message name="getCompleteLotDataSoapIn">
+    <wsdl:part name="parameters" element="tns:getCompleteLotData" />
+  </wsdl:message>
+  <wsdl:message name="getCompleteLotDataSoapOut">
+    <wsdl:part name="parameters" element="tns:getCompleteLotDataResponse" />
+  </wsdl:message>
+  <wsdl:message name="getDBEnvironmentSoapIn">
+    <wsdl:part name="parameters" element="tns:getDBEnvironment" />
+  </wsdl:message>
+  <wsdl:message name="getDBEnvironmentSoapOut">
+    <wsdl:part name="parameters" element="tns:getDBEnvironmentResponse" />
+  </wsdl:message>
+  <wsdl:message name="getAreaListSoapIn">
+    <wsdl:part name="parameters" element="tns:getAreaList" />
+  </wsdl:message>
+  <wsdl:message name="getAreaListSoapOut">
+    <wsdl:part name="parameters" element="tns:getAreaListResponse" />
+  </wsdl:message>
+  <wsdl:message name="getMachineGroupListSoapIn">
+    <wsdl:part name="parameters" element="tns:getMachineGroupList" />
+  </wsdl:message>
+  <wsdl:message name="getMachineGroupListSoapOut">
+    <wsdl:part name="parameters" element="tns:getMachineGroupListResponse" />
+  </wsdl:message>
+  <wsdl:message name="getMachineListSoapIn">
+    <wsdl:part name="parameters" element="tns:getMachineList" />
+  </wsdl:message>
+  <wsdl:message name="getMachineListSoapOut">
+    <wsdl:part name="parameters" element="tns:getMachineListResponse" />
+  </wsdl:message>
+  <wsdl:message name="CheckBatchSoapIn">
+    <wsdl:part name="parameters" element="tns:CheckBatch" />
+  </wsdl:message>
+  <wsdl:message name="CheckBatchSoapOut">
+    <wsdl:part name="parameters" element="tns:CheckBatchResponse" />
+  </wsdl:message>
+  <wsdl:message name="updateACSBatchSoapIn">
+    <wsdl:part name="parameters" element="tns:updateACSBatch" />
+  </wsdl:message>
+  <wsdl:message name="updateACSBatchSoapOut">
+    <wsdl:part name="parameters" element="tns:updateACSBatchResponse" />
+  </wsdl:message>
+  <wsdl:message name="getEquipmentInfoSoapIn">
+    <wsdl:part name="parameters" element="tns:getEquipmentInfo" />
+  </wsdl:message>
+  <wsdl:message name="getEquipmentInfoSoapOut">
+    <wsdl:part name="parameters" element="tns:getEquipmentInfoResponse" />
+  </wsdl:message>
+  <wsdl:message name="getInitDataInfoSoapIn">
+    <wsdl:part name="parameters" element="tns:getInitDataInfo" />
+  </wsdl:message>
+  <wsdl:message name="getInitDataInfoSoapOut">
+    <wsdl:part name="parameters" element="tns:getInitDataInfoResponse" />
+  </wsdl:message>
+  <wsdl:message name="startPARMSLotSoapIn">
+    <wsdl:part name="parameters" element="tns:startPARMSLot" />
+  </wsdl:message>
+  <wsdl:message name="startPARMSLotSoapOut">
+    <wsdl:part name="parameters" element="tns:startPARMSLotResponse" />
+  </wsdl:message>
+  <wsdl:message name="HelloWorldHttpGetIn" />
+  <wsdl:message name="HelloWorldHttpGetOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="getCompleteLotDataHttpGetIn">
+    <wsdl:part name="transportLotID" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="getCompleteLotDataHttpGetOut">
+    <wsdl:part name="Body" element="tns:CompleteLotDataProxy" />
+  </wsdl:message>
+  <wsdl:message name="getDBEnvironmentHttpGetIn">
+    <wsdl:part name="Operation" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="getDBEnvironmentHttpGetOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="getAreaListHttpGetIn">
+    <wsdl:part name="Operation" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="getAreaListHttpGetOut">
+    <wsdl:part name="Body" element="tns:ArrayOfString" />
+  </wsdl:message>
+  <wsdl:message name="getMachineGroupListHttpGetIn">
+    <wsdl:part name="Operation" type="s:string" />
+    <wsdl:part name="areaName" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="getMachineGroupListHttpGetOut">
+    <wsdl:part name="Body" element="tns:ArrayOfString" />
+  </wsdl:message>
+  <wsdl:message name="getMachineListHttpGetIn">
+    <wsdl:part name="Operation" type="s:string" />
+    <wsdl:part name="areaName" type="s:string" />
+    <wsdl:part name="machineGroup" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="getMachineListHttpGetOut">
+    <wsdl:part name="Body" element="tns:ArrayOfMachineProxy" />
+  </wsdl:message>
+  <wsdl:message name="CheckBatchHttpGetIn">
+    <wsdl:part name="Operation" type="s:string" />
+    <wsdl:part name="batchno" type="s:string" />
+    <wsdl:part name="locations" type="s:string" />
+    <wsdl:part name="operatorID" type="s:string" />
+    <wsdl:part name="material1" type="s:string" />
+    <wsdl:part name="material2" type="s:string" />
+    <wsdl:part name="material3" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="CheckBatchHttpGetOut">
+    <wsdl:part name="Body" element="tns:BatchInputProxy" />
+  </wsdl:message>
+  <wsdl:message name="updateACSBatchHttpGetIn">
+    <wsdl:part name="Operation" type="s:string" />
+    <wsdl:part name="areaID" type="s:string" />
+    <wsdl:part name="machineID" type="s:string" />
+    <wsdl:part name="batchNo" type="s:string" />
+    <wsdl:part name="typeName" type="s:string" />
+    <wsdl:part name="ncCode" type="s:string" />
+    <wsdl:part name="Diffusion" type="s:string" />
+    <wsdl:part name="Package" type="s:string" />
+    <wsdl:part name="OperatorID" type="s:string" />
+    <wsdl:part name="TotalQty" type="s:string" />
+    <wsdl:part name="Material1" type="s:string" />
+    <wsdl:part name="Material2" type="s:string" />
+    <wsdl:part name="Material3" type="s:string" />
+    <wsdl:part name="Material4" type="s:string" />
+    <wsdl:part name="Stage" type="s:string" />
+    <wsdl:part name="typeFamily" type="s:string" />
+    <wsdl:part name="sysStatus" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="updateACSBatchHttpGetOut">
+    <wsdl:part name="Body" element="tns:ACSProxy" />
+  </wsdl:message>
+  <wsdl:message name="getEquipmentInfoHttpGetIn">
+    <wsdl:part name="locationID" type="s:string" />
+    <wsdl:part name="operation" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="getEquipmentInfoHttpGetOut">
+    <wsdl:part name="Body" element="tns:ACSProxy" />
+  </wsdl:message>
+  <wsdl:message name="getInitDataInfoHttpGetIn">
+    <wsdl:part name="batchNo" type="s:string" />
+    <wsdl:part name="machineID" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="getInitDataInfoHttpGetOut">
+    <wsdl:part name="Body" element="tns:PAProxy" />
+  </wsdl:message>
+  <wsdl:message name="HelloWorldHttpPostIn" />
+  <wsdl:message name="HelloWorldHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="getCompleteLotDataHttpPostIn">
+    <wsdl:part name="transportLotID" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="getCompleteLotDataHttpPostOut">
+    <wsdl:part name="Body" element="tns:CompleteLotDataProxy" />
+  </wsdl:message>
+  <wsdl:message name="getDBEnvironmentHttpPostIn">
+    <wsdl:part name="Operation" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="getDBEnvironmentHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="getAreaListHttpPostIn">
+    <wsdl:part name="Operation" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="getAreaListHttpPostOut">
+    <wsdl:part name="Body" element="tns:ArrayOfString" />
+  </wsdl:message>
+  <wsdl:message name="getMachineGroupListHttpPostIn">
+    <wsdl:part name="Operation" type="s:string" />
+    <wsdl:part name="areaName" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="getMachineGroupListHttpPostOut">
+    <wsdl:part name="Body" element="tns:ArrayOfString" />
+  </wsdl:message>
+  <wsdl:message name="getMachineListHttpPostIn">
+    <wsdl:part name="Operation" type="s:string" />
+    <wsdl:part name="areaName" type="s:string" />
+    <wsdl:part name="machineGroup" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="getMachineListHttpPostOut">
+    <wsdl:part name="Body" element="tns:ArrayOfMachineProxy" />
+  </wsdl:message>
+  <wsdl:message name="CheckBatchHttpPostIn">
+    <wsdl:part name="Operation" type="s:string" />
+    <wsdl:part name="batchno" type="s:string" />
+    <wsdl:part name="locations" type="s:string" />
+    <wsdl:part name="operatorID" type="s:string" />
+    <wsdl:part name="material1" type="s:string" />
+    <wsdl:part name="material2" type="s:string" />
+    <wsdl:part name="material3" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="CheckBatchHttpPostOut">
+    <wsdl:part name="Body" element="tns:BatchInputProxy" />
+  </wsdl:message>
+  <wsdl:message name="updateACSBatchHttpPostIn">
+    <wsdl:part name="Operation" type="s:string" />
+    <wsdl:part name="areaID" type="s:string" />
+    <wsdl:part name="machineID" type="s:string" />
+    <wsdl:part name="batchNo" type="s:string" />
+    <wsdl:part name="typeName" type="s:string" />
+    <wsdl:part name="ncCode" type="s:string" />
+    <wsdl:part name="Diffusion" type="s:string" />
+    <wsdl:part name="Package" type="s:string" />
+    <wsdl:part name="OperatorID" type="s:string" />
+    <wsdl:part name="TotalQty" type="s:string" />
+    <wsdl:part name="Material1" type="s:string" />
+    <wsdl:part name="Material2" type="s:string" />
+    <wsdl:part name="Material3" type="s:string" />
+    <wsdl:part name="Material4" type="s:string" />
+    <wsdl:part name="Stage" type="s:string" />
+    <wsdl:part name="typeFamily" type="s:string" />
+    <wsdl:part name="sysStatus" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="updateACSBatchHttpPostOut">
+    <wsdl:part name="Body" element="tns:ACSProxy" />
+  </wsdl:message>
+  <wsdl:message name="getEquipmentInfoHttpPostIn">
+    <wsdl:part name="locationID" type="s:string" />
+    <wsdl:part name="operation" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="getEquipmentInfoHttpPostOut">
+    <wsdl:part name="Body" element="tns:ACSProxy" />
+  </wsdl:message>
+  <wsdl:message name="getInitDataInfoHttpPostIn">
+    <wsdl:part name="batchNo" type="s:string" />
+    <wsdl:part name="machineID" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="getInitDataInfoHttpPostOut">
+    <wsdl:part name="Body" element="tns:PAProxy" />
+  </wsdl:message>
+  <wsdl:portType name="ServiceSoap">
+    <wsdl:operation name="HelloWorld">
+      <wsdl:input message="tns:HelloWorldSoapIn" />
+      <wsdl:output message="tns:HelloWorldSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getCompleteLotData">
+      <wsdl:input message="tns:getCompleteLotDataSoapIn" />
+      <wsdl:output message="tns:getCompleteLotDataSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getDBEnvironment">
+      <wsdl:input message="tns:getDBEnvironmentSoapIn" />
+      <wsdl:output message="tns:getDBEnvironmentSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getAreaList">
+      <wsdl:input message="tns:getAreaListSoapIn" />
+      <wsdl:output message="tns:getAreaListSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getMachineGroupList">
+      <wsdl:input message="tns:getMachineGroupListSoapIn" />
+      <wsdl:output message="tns:getMachineGroupListSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getMachineList">
+      <wsdl:input message="tns:getMachineListSoapIn" />
+      <wsdl:output message="tns:getMachineListSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CheckBatch">
+      <wsdl:input message="tns:CheckBatchSoapIn" />
+      <wsdl:output message="tns:CheckBatchSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="updateACSBatch">
+      <wsdl:input message="tns:updateACSBatchSoapIn" />
+      <wsdl:output message="tns:updateACSBatchSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getEquipmentInfo">
+      <wsdl:input message="tns:getEquipmentInfoSoapIn" />
+      <wsdl:output message="tns:getEquipmentInfoSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getInitDataInfo">
+      <wsdl:input message="tns:getInitDataInfoSoapIn" />
+      <wsdl:output message="tns:getInitDataInfoSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="startPARMSLot">
+      <wsdl:input message="tns:startPARMSLotSoapIn" />
+      <wsdl:output message="tns:startPARMSLotSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:portType name="ServiceHttpGet">
+    <wsdl:operation name="HelloWorld">
+      <wsdl:input message="tns:HelloWorldHttpGetIn" />
+      <wsdl:output message="tns:HelloWorldHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getCompleteLotData">
+      <wsdl:input message="tns:getCompleteLotDataHttpGetIn" />
+      <wsdl:output message="tns:getCompleteLotDataHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getDBEnvironment">
+      <wsdl:input message="tns:getDBEnvironmentHttpGetIn" />
+      <wsdl:output message="tns:getDBEnvironmentHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getAreaList">
+      <wsdl:input message="tns:getAreaListHttpGetIn" />
+      <wsdl:output message="tns:getAreaListHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getMachineGroupList">
+      <wsdl:input message="tns:getMachineGroupListHttpGetIn" />
+      <wsdl:output message="tns:getMachineGroupListHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getMachineList">
+      <wsdl:input message="tns:getMachineListHttpGetIn" />
+      <wsdl:output message="tns:getMachineListHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CheckBatch">
+      <wsdl:input message="tns:CheckBatchHttpGetIn" />
+      <wsdl:output message="tns:CheckBatchHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="updateACSBatch">
+      <wsdl:input message="tns:updateACSBatchHttpGetIn" />
+      <wsdl:output message="tns:updateACSBatchHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getEquipmentInfo">
+      <wsdl:input message="tns:getEquipmentInfoHttpGetIn" />
+      <wsdl:output message="tns:getEquipmentInfoHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getInitDataInfo">
+      <wsdl:input message="tns:getInitDataInfoHttpGetIn" />
+      <wsdl:output message="tns:getInitDataInfoHttpGetOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:portType name="ServiceHttpPost">
+    <wsdl:operation name="HelloWorld">
+      <wsdl:input message="tns:HelloWorldHttpPostIn" />
+      <wsdl:output message="tns:HelloWorldHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getCompleteLotData">
+      <wsdl:input message="tns:getCompleteLotDataHttpPostIn" />
+      <wsdl:output message="tns:getCompleteLotDataHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getDBEnvironment">
+      <wsdl:input message="tns:getDBEnvironmentHttpPostIn" />
+      <wsdl:output message="tns:getDBEnvironmentHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getAreaList">
+      <wsdl:input message="tns:getAreaListHttpPostIn" />
+      <wsdl:output message="tns:getAreaListHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getMachineGroupList">
+      <wsdl:input message="tns:getMachineGroupListHttpPostIn" />
+      <wsdl:output message="tns:getMachineGroupListHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getMachineList">
+      <wsdl:input message="tns:getMachineListHttpPostIn" />
+      <wsdl:output message="tns:getMachineListHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CheckBatch">
+      <wsdl:input message="tns:CheckBatchHttpPostIn" />
+      <wsdl:output message="tns:CheckBatchHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="updateACSBatch">
+      <wsdl:input message="tns:updateACSBatchHttpPostIn" />
+      <wsdl:output message="tns:updateACSBatchHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getEquipmentInfo">
+      <wsdl:input message="tns:getEquipmentInfoHttpPostIn" />
+      <wsdl:output message="tns:getEquipmentInfoHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getInitDataInfo">
+      <wsdl:input message="tns:getInitDataInfoHttpPostIn" />
+      <wsdl:output message="tns:getInitDataInfoHttpPostOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="ServiceSoap" type="tns:ServiceSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="HelloWorld">
+      <soap:operation soapAction="http://tempuri.org/HelloWorld" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getCompleteLotData">
+      <soap:operation soapAction="http://tempuri.org/getCompleteLotData" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getDBEnvironment">
+      <soap:operation soapAction="http://tempuri.org/getDBEnvironment" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getAreaList">
+      <soap:operation soapAction="http://tempuri.org/getAreaList" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getMachineGroupList">
+      <soap:operation soapAction="http://tempuri.org/getMachineGroupList" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getMachineList">
+      <soap:operation soapAction="http://tempuri.org/getMachineList" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CheckBatch">
+      <soap:operation soapAction="http://tempuri.org/CheckBatch" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateACSBatch">
+      <soap:operation soapAction="http://tempuri.org/updateACSBatch" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getEquipmentInfo">
+      <soap:operation soapAction="http://tempuri.org/getEquipmentInfo" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getInitDataInfo">
+      <soap:operation soapAction="http://tempuri.org/getInitDataInfo" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="startPARMSLot">
+      <soap:operation soapAction="http://tempuri.org/startPARMSLot" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="ServiceSoap12" type="tns:ServiceSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="HelloWorld">
+      <soap12:operation soapAction="http://tempuri.org/HelloWorld" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getCompleteLotData">
+      <soap12:operation soapAction="http://tempuri.org/getCompleteLotData" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getDBEnvironment">
+      <soap12:operation soapAction="http://tempuri.org/getDBEnvironment" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getAreaList">
+      <soap12:operation soapAction="http://tempuri.org/getAreaList" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getMachineGroupList">
+      <soap12:operation soapAction="http://tempuri.org/getMachineGroupList" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getMachineList">
+      <soap12:operation soapAction="http://tempuri.org/getMachineList" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CheckBatch">
+      <soap12:operation soapAction="http://tempuri.org/CheckBatch" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateACSBatch">
+      <soap12:operation soapAction="http://tempuri.org/updateACSBatch" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getEquipmentInfo">
+      <soap12:operation soapAction="http://tempuri.org/getEquipmentInfo" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getInitDataInfo">
+      <soap12:operation soapAction="http://tempuri.org/getInitDataInfo" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="startPARMSLot">
+      <soap12:operation soapAction="http://tempuri.org/startPARMSLot" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="ServiceHttpGet" type="tns:ServiceHttpGet">
+    <http:binding verb="GET" />
+    <wsdl:operation name="HelloWorld">
+      <http:operation location="/HelloWorld" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getCompleteLotData">
+      <http:operation location="/getCompleteLotData" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getDBEnvironment">
+      <http:operation location="/getDBEnvironment" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getAreaList">
+      <http:operation location="/getAreaList" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getMachineGroupList">
+      <http:operation location="/getMachineGroupList" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getMachineList">
+      <http:operation location="/getMachineList" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CheckBatch">
+      <http:operation location="/CheckBatch" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateACSBatch">
+      <http:operation location="/updateACSBatch" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getEquipmentInfo">
+      <http:operation location="/getEquipmentInfo" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getInitDataInfo">
+      <http:operation location="/getInitDataInfo" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="ServiceHttpPost" type="tns:ServiceHttpPost">
+    <http:binding verb="POST" />
+    <wsdl:operation name="HelloWorld">
+      <http:operation location="/HelloWorld" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getCompleteLotData">
+      <http:operation location="/getCompleteLotData" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getDBEnvironment">
+      <http:operation location="/getDBEnvironment" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getAreaList">
+      <http:operation location="/getAreaList" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getMachineGroupList">
+      <http:operation location="/getMachineGroupList" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getMachineList">
+      <http:operation location="/getMachineList" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CheckBatch">
+      <http:operation location="/CheckBatch" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateACSBatch">
+      <http:operation location="/updateACSBatch" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getEquipmentInfo">
+      <http:operation location="/getEquipmentInfo" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getInitDataInfo">
+      <http:operation location="/getInitDataInfo" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="Service">
+    <wsdl:port name="ServiceSoap" binding="tns:ServiceSoap">
+      <soap:address location="http://apkvm1013/assyws/service.asmx" />
+    </wsdl:port>
+    <wsdl:port name="ServiceSoap12" binding="tns:ServiceSoap12">
+      <soap12:address location="http://apkvm1013/assyws/service.asmx" />
+    </wsdl:port>
+    <wsdl:port name="ServiceHttpGet" binding="tns:ServiceHttpGet">
+      <http:address location="http://apkvm1013/assyws/service.asmx" />
+    </wsdl:port>
+    <wsdl:port name="ServiceHttpPost" binding="tns:ServiceHttpPost">
+      <http:address location="http://apkvm1013/assyws/service.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

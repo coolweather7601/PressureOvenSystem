@@ -1,0 +1,28 @@
+c:\users\nxp66187\documents\visual studio 2010\Projects\ovenWin\ovenWin\bin\Debug\ovenWin.exe
+c:\users\nxp66187\documents\visual studio 2010\Projects\ovenWin\ovenWin\bin\Debug\ovenWin.pdb
+c:\users\nxp66187\documents\visual studio 2010\Projects\ovenWin\ovenWin\bin\Debug\log4net.dll
+c:\users\nxp66187\documents\visual studio 2010\Projects\ovenWin\ovenWin\bin\Debug\nmodbuspc.dll
+c:\users\nxp66187\documents\visual studio 2010\Projects\ovenWin\ovenWin\obj\x86\Debug\ovenWin.csprojResolveAssemblyReference.cache
+c:\users\nxp66187\documents\visual studio 2010\Projects\ovenWin\ovenWin\obj\x86\Debug\ovenWin.exe
+c:\users\nxp66187\documents\visual studio 2010\Projects\ovenWin\ovenWin\obj\x86\Debug\ovenWin.pdb
+c:\users\nxp66187\documents\visual studio 2010\Projects\ovenWin\ovenWin\bin\Debug\ovenWin.exe.config
+C:\Users\nxp66187\Documents\GitHub\PressureOvenSystem\ovenWin\ovenWin\bin\Debug\ovenWin.exe.config
+C:\Users\nxp66187\Documents\GitHub\PressureOvenSystem\ovenWin\ovenWin\obj\x86\Debug\ovenWin.exe
+C:\Users\nxp66187\Documents\GitHub\PressureOvenSystem\ovenWin\ovenWin\obj\x86\Debug\ovenWin.pdb
+C:\Users\nxp66187\Documents\GitHub\PressureOvenSystem\ovenWin\ovenWin\bin\Debug\ovenWin.exe
+C:\Users\nxp66187\Documents\GitHub\PressureOvenSystem\ovenWin\ovenWin\bin\Debug\ovenWin.pdb
+C:\Users\nxp66187\Documents\GitHub\PressureOvenSystem\ovenWin\ovenWin\bin\Debug\log4net.dll
+C:\Users\nxp66187\Documents\GitHub\PressureOvenSystem\ovenWin\ovenWin\bin\Debug\nmodbuspc.dll
+C:\Users\nxp66187\Documents\GitHub\PressureOvenSystem\ovenWin\ovenWin\obj\x86\Debug\ovenWin.csprojResolveAssemblyReference.cache
+C:\Users\nxp66187\Documents\AlanKuo\program\GitHub\PressureOvenSystem\ovenWin\ovenWin\bin\Debug\ovenWin.exe.config
+C:\Users\nxp66187\Documents\AlanKuo\program\GitHub\PressureOvenSystem\ovenWin\ovenWin\obj\x86\Debug\ovenWin.exe
+C:\Users\nxp66187\Documents\AlanKuo\program\GitHub\PressureOvenSystem\ovenWin\ovenWin\obj\x86\Debug\ovenWin.pdb
+C:\Users\nxp66187\Documents\AlanKuo\program\GitHub\PressureOvenSystem\ovenWin\ovenWin\obj\x86\Debug\ovenWin.csprojResolveAssemblyReference.cache
+C:\Users\nxp66187\Documents\AlanKuo\program\GitHub\PressureOvenSystem\ovenWin\ovenWin\bin\Debug\ovenWin.exe
+C:\Users\nxp66187\Documents\AlanKuo\program\GitHub\PressureOvenSystem\ovenWin\ovenWin\bin\Debug\ovenWin.pdb
+C:\Users\nxp66187\Documents\AlanKuo\program\GitHub\PressureOvenSystem\ovenWebService\ovenWin\ovenWin\bin\Debug\ovenWin.exe.config
+C:\Users\nxp66187\Documents\AlanKuo\program\GitHub\PressureOvenSystem\ovenWebService\ovenWin\ovenWin\obj\x86\Debug\ovenWin.exe
+C:\Users\nxp66187\Documents\AlanKuo\program\GitHub\PressureOvenSystem\ovenWebService\ovenWin\ovenWin\obj\x86\Debug\ovenWin.pdb
+C:\Users\nxp66187\Documents\AlanKuo\program\GitHub\PressureOvenSystem\ovenWebService\ovenWin\ovenWin\bin\Debug\ovenWin.exe
+C:\Users\nxp66187\Documents\AlanKuo\program\GitHub\PressureOvenSystem\ovenWebService\ovenWin\ovenWin\bin\Debug\ovenWin.pdb
+C:\Users\nxp66187\Documents\AlanKuo\program\GitHub\PressureOvenSystem\ovenWebService\ovenWin\ovenWin\obj\x86\Debug\ovenWin.csprojResolveAssemblyReference.cache
