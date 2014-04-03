@@ -262,46 +262,56 @@ namespace nModBusWeb
                 }                
                 if (check) 
                 {
-                    #region Into log 
-                    //intoLog(txtBC.Text.Trim().ToUpper());
-                    try
+                    //============================================================================
+                    //Check oven status 
+                    //============================================================================
+                    string ovenStr = string.Format(@"Select * From Oven_Assy_Status Where PMID = '{0}'", txtMachineID.Text.Trim().ToUpper());
+                    DataTable dtStatus = ado.loadDataTable(ovenStr, null, "Oven_Assy_Status");
+                    if (dtStatus.Rows.Count > 0) { ScriptManager.RegisterStartupScript(this, this.GetType(), "", "alert(this oven is working, please check again!);", true); }
+                    else
                     {
-                        App_Code.func fc = new App_Code.func();
-                        DataTable mdt = fc.getFromIntrack(txtBC.Text.Trim().ToUpper());
-                        if (mdt == null) { ScriptManager.RegisterStartupScript(this, this.GetType(), "", string.Format(@"alert('mdt == null');"), true); }
+                        //============================================================================
+                        //Write to Oven_Assy_Status Log
+                        //============================================================================
+                        try
+                        {
+                            App_Code.func fc = new App_Code.func();
+                            DataTable mdt = fc.getFromIntrack(txtBC.Text.Trim().ToUpper());
+                            if (mdt == null) { ScriptManager.RegisterStartupScript(this, this.GetType(), "", string.Format(@"alert('mdt == null');"), true); }
 
-                        string alertStr = string.Format(@"typename = {0}, ED_12NC = {1}, Diffusion = {2}, Package = {3}, Glue = {4}
+                            string alertStr = string.Format(@"typename = {0}, ED_12NC = {1}, Diffusion = {2}, Package = {3}, Glue = {4}
                                                                   ", mdt.Rows[0]["TypeName"].ToString(), mdt.Rows[0]["ED_12NC"].ToString(),
-                                                             mdt.Rows[0]["Diffusion"].ToString(), mdt.Rows[0]["package"].ToString(),
-                                                             mdt.Rows[0]["Glue"].ToString());
-                        //Response.Write(alertStr);
+                                                                 mdt.Rows[0]["Diffusion"].ToString(), mdt.Rows[0]["package"].ToString(),
+                                                                 mdt.Rows[0]["Glue"].ToString());
+                            //Response.Write(alertStr);
 
-                        string insertStr = string.Format(@"Insert into oven_Assy_Status(ID,PMID,AREA,OVEN_ID,PTN,Batch_NO,
+                            string insertStr = string.Format(@"Insert into oven_Assy_Status(ID,PMID,AREA,OVEN_ID,PTN,Batch_NO,
                                                                                 Type_Name,NC_Code,Diffusion,Package,
                                                                                 Bake_Time,In_Time,Est_Out_Time,Op_ID,Glue)
                                                    Values (:ID,:AREA,:OVEN_ID,:PTN,:Batch_NO,
                                                            :Type_Name,:NC_Code,:Diffusion,:Package,
                                                            :Bake_Time,:In_Time,:Est_Out_Time,:Op_ID,:Glue)");
-                        object[] para = new object[] { DateTime.Now.ToString("yyyyMMdd_hhmmss"),pk_Area,txtOvenID.Text.Trim().ToUpper(),txtPTN.Text.Trim().ToUpper(),txtBC.Text.Trim().ToUpper(),
+                            object[] para = new object[] { DateTime.Now.ToString("yyyyMMdd_hhmmss"),pk_Area,txtOvenID.Text.Trim().ToUpper(),txtPTN.Text.Trim().ToUpper(),txtBC.Text.Trim().ToUpper(),
                                                        mdt.Rows[0]["TypeName"].ToString().ToUpper(), mdt.Rows[0]["ED_12NC"].ToString(),mdt.Rows[0]["Diffusion"].ToString(),mdt.Rows[0]["package"].ToString(),
                                                        dt_BakeTime.Rows[0]["bakeTime"].ToString(),DateTime.Now,DateTime.Now.AddMinutes(Convert.ToDouble(dt_BakeTime.Rows[0]["bakeTime"].ToString())),txtUser.Text.Trim(),mdt.Rows[0]["Glue"].ToString().ToUpper()};
-                        string result = ado.dbNonQuery(insertStr, para).ToString();
-                        if (result.Equals("SUCCESS")) { ScriptManager.RegisterStartupScript(this, this.GetType(), "", "alert('insert success');", true); }
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.ToString());
-                        ScriptManager.RegisterStartupScript(this, this.GetType(), "", string.Format(@"alert('fail');"), true);
-                    }
-                    #endregion
-                    
+                            string result = ado.dbNonQuery(insertStr, para).ToString();
+                            if (result.Equals("SUCCESS")) { ScriptManager.RegisterStartupScript(this, this.GetType(), "", "alert('insert success');", true); }
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.ToString());
+                            ScriptManager.RegisterStartupScript(this, this.GetType(), "", string.Format(@"alert('fail');"), true);
+                        }
 
-                    //Comport/ MachineID/ LimitTemperature/ LimitPressure/ TotalTime(minute)
-                    callWebService(string.Format(@"{0} {1} {2} {3} {4}", dt.Rows[0]["Comport"].ToString(),
-                                                                      txtMachineID.Text.Trim().ToUpper(),
-                                                                      dr_bakeTime["Temperature_1"].ToString(),
-                                                                      dr_bakeTime["Pressure_1"].ToString(),
-                                                                      dr_bakeTime["baketime"].ToString()));
+                        //============================================================================
+                        //Comport/ MachineID/ LimitTemperature/ LimitPressure/ TotalTime(minute)
+                        //============================================================================
+                        callWebService(string.Format(@"{0} {1} {2} {3} {4}", dt.Rows[0]["Comport"].ToString(),
+                                                                          txtMachineID.Text.Trim().ToUpper(),
+                                                                          dr_bakeTime["Temperature_1"].ToString(),
+                                                                          dr_bakeTime["Pressure_1"].ToString(),
+                                                                          dr_bakeTime["baketime"].ToString()));
+                    }
                 }
             }            
         }

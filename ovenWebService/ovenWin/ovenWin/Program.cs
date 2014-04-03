@@ -151,7 +151,16 @@ namespace ovenWin
                 #endregion
 
 
-                if (ScanTime < StartTime) { Mode(machineMode.close); timer.Stop(); }
+                if (ScanTime < StartTime) 
+                {
+                    //end bake log 
+                    string endLogstr = string.Format(@"insert into oven_assy_log(oven_assy_logid,machine_ID,oven_Assy_logKindID,Time)
+                                                       values(oven_assy_log_sequence.nextval,'{0}','0',SYSDATE)", Machine_ID);
+                    ado.dbNonQuery(endLogstr, null);
+
+                    Mode(machineMode.close);
+                    timer.Stop();
+                }
             }
             catch (Exception exception)
             {

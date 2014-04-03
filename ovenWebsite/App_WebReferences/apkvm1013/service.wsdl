@@ -447,6 +447,7 @@
           <s:element minOccurs="0" maxOccurs="1" name="Approve_Status" type="s:string" />
           <s:element minOccurs="1" maxOccurs="1" name="Approve_Date" type="s:dateTime" />
           <s:element minOccurs="0" maxOccurs="1" name="Sawing_Foil" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Grinding_Foil" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="Auto_Dressing" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="SMemo" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="PPName" type="s:string" />
