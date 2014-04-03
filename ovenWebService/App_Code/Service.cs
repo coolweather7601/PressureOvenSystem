@@ -17,12 +17,7 @@ public class Service : System.Web.Services.WebService
     }
 
     [WebMethod]
-    public string HelloWorld() {
-        return "Hello World";
-    }
-
-    [WebMethod]
-    public void callConsole(string parmes)
+    public string callConsole(string parmes)
     {
         Process w = new Process();
         //指定 調用程序的路徑
@@ -36,5 +31,7 @@ public class Service : System.Web.Services.WebService
         //指定 調用程序的參數
         w.StartInfo.Arguments = parmes;
         w.Start();
+
+        return w.StartInfo.FileName;
     }
 }

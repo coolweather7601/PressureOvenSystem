@@ -11,6 +11,8 @@ using System.Data;
 
 //call console
 using System.Diagnostics;
+using System.Collections;
+using System.Xml;
 
 namespace nModBusWeb
 {
@@ -33,8 +35,8 @@ namespace nModBusWeb
                 txtUser.Text = Request.QueryString["USER"];
                 txtMachineID.Text = Request.QueryString["Machine_ID"];
 
-                //callConsole("COM3 OV-135 1 9 1");
-
+                //callConsole("COM10 OV-135 1 9 1");
+                //callWebService("COM10 OV-135 1 9 1");
                 //intoLog("6420DCC108");
             }
         }
@@ -54,6 +56,15 @@ namespace nModBusWeb
             //指定 調用程序的參數
             w.StartInfo.Arguments = parmes;
             w.Start();
+        }
+
+        /// <summary>
+        /// call webservice auto scan oven param(ComPort/ Machine_ID/ TemperatureLimit/ PressureLimit/ TotalTime )
+        /// </summary>
+        private void callWebService(string parmes)
+        {
+            ovenWebservice.Service sfc = new ovenWebservice.Service();
+            string ovenWinPath = sfc.callConsole(parmes);
         }
 
         /// <summary>
@@ -286,7 +297,7 @@ namespace nModBusWeb
                     
 
                     //Comport/ MachineID/ LimitTemperature/ LimitPressure/ TotalTime(minute)
-                    callConsole(string.Format(@"{0} {1} {2} {3} {4}", dt.Rows[0]["Comport"].ToString(),
+                    callWebService(string.Format(@"{0} {1} {2} {3} {4}", dt.Rows[0]["Comport"].ToString(),
                                                                       txtMachineID.Text.Trim().ToUpper(),
                                                                       dr_bakeTime["Temperature_1"].ToString(),
                                                                       dr_bakeTime["Pressure_1"].ToString(),
