@@ -100,63 +100,7 @@
         </div>
 
 
-        <%--<div style='border-top: 1px solid #96d1f8;
-                    background: #1f5d87;
-                    padding: 7.5px 15px;
-                    -webkit-border-radius: 8px;
-                    -moz-border-radius: 8px;
-                    -webkit-box-shadow: rgba(0,0,0,1) 0 1px 0;
-                    -moz-box-shadow: rgba(0,0,0,1) 0 1px 0;
-                    color: white;'>
-            <table> 
-                <tr>
-                    <td><asp:Label ID="lblTimer" runat="server" Text="ComPort"></asp:Label></td>
-                    <td><asp:Button ID="btnOpen" runat="server" Text="Open" onclick="btnOpen_Click" Enabled="true" />
-                        <asp:Button ID="btnClose" runat="server" Text="Close" onclick="btnClose_Click" Enabled="false" />
-                    </td>                    
-                </tr>
-                <tr>
-                    <td>Function Cade.</td>
-                    <td><asp:DropDownList ID="ddlFunc" runat="server" AutoPostBack="true" onselectedindexchanged="ddlFunc_SelectedIndexChanged"></asp:DropDownList></td>
-                </tr>
-                <tr>
-                    <td>Test Category.</td>
-                    <td><asp:DropDownList ID="ddlTest" runat="server" AutoPostBack="true" onselectedindexchanged="ddlTest_SelectedIndexChanged"></asp:DropDownList></td>
-                </tr>
-                <tr>
-                    <td colspan="2">
-                        Write Value.
-                        <asp:TextBox ID="txtInput" runat="server"></asp:TextBox>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Start Address.</td>
-                    <td><asp:Label ID="lblRequest" runat="server" Text="Label"></asp:Label></td>
-                </tr>                    
-                <tr>
-                    <td>
-                        <asp:CheckBox ID="chk_10" runat="server" oncheckedchanged="chk_10_CheckedChanged" />十進位.
-                    </td>
-                    <td>
-                        <asp:TextBox ID="txt_10" runat="server"></asp:TextBox>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <asp:CheckBox ID="chk_16" runat="server" oncheckedchanged="chk_16_CheckedChanged" />十六進位.
-                    </td>
-                    <td>
-                        <asp:TextBox ID="txt_16" runat="server"></asp:TextBox>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2">
-                        <asp:Button ID="btnRequest" runat="server" Text="Request" onclick="btnRequest_Click" />
-                    </td>
-                </tr>
-                
-            </table>
-        </div>--%>
+        
         </ContentTemplate>
     </asp:UpdatePanel>
 </asp:Content>
