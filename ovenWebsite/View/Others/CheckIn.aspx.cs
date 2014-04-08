@@ -37,7 +37,7 @@ namespace nModBusWeb
 
                 //callConsole("COM10 OV-135 1 9 1");
                 //callWebService("COM10 OV-135 1-0-2-110-7|2-0-2-126-7");
-                //intoLog("6420DCC108");
+                //intoLog("6420DCC108");                
             }
         }
 
@@ -316,7 +316,7 @@ namespace nModBusWeb
                                                        mdt.Rows[0]["TypeName"].ToString().ToUpper(), mdt.Rows[0]["ED_12NC"].ToString(),mdt.Rows[0]["Diffusion"].ToString(),mdt.Rows[0]["package"].ToString(),
                                                        dt_BakeTime.Rows[0]["bakeTime"].ToString(),DateTime.Now,DateTime.Now.AddMinutes(Convert.ToDouble(dt_BakeTime.Rows[0]["bakeTime"].ToString())),txtUser.Text.Trim(),mdt.Rows[0]["Glue"].ToString().ToUpper()};
                                 string result = ado.dbNonQuery(insertStr, para).ToString();
-                                if (result.Equals("SUCCESS")) { ScriptManager.RegisterStartupScript(this, this.GetType(), "", "alert('Success, the oven is working.');", true); }
+                                if (result.Equals("SUCCESS")) { ScriptManager.RegisterStartupScript(this, this.GetType(), "", string.Format(@"alert('Success, the oven is working.'); window.location.href='{0}';", System.Web.Configuration.WebConfigurationManager.AppSettings["msWebSite"].ToString()), true); }
 
 
                                 //============================================================================
