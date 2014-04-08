@@ -36,7 +36,7 @@ namespace nModBusWeb
                 txtMachineID.Text = Request.QueryString["Machine_ID"];
 
                 //callConsole("COM10 OV-135 1 9 1");
-                //callWebService("COM10 OV-135 1 9 1");
+                //callWebService("COM10 OV-135 1-0-2-110-7|2-0-2-126-7");
                 //intoLog("6420DCC108");
             }
         }
@@ -110,7 +110,7 @@ namespace nModBusWeb
                 //===============================================================================
                 //Second Parameters
                 //===============================================================================
-                ushort[] register_Process_2 = master.ReadHoldingRegisters(slaveID, fc.secondPressure, numOfPoints);
+                ushort[] register_Process_2 = master.ReadHoldingRegisters(slaveID, fc.secondProcess, numOfPoints);
                 ushort[] register_Hour_2 = master.ReadHoldingRegisters(slaveID, fc.secondHour, numOfPoints);
                 ushort[] register_Min_2 = master.ReadHoldingRegisters(slaveID, fc.secondMin, numOfPoints);
                 ushort[] register_Temperature_2 = master.ReadHoldingRegisters(slaveID, fc.secondTemperature, numOfPoints);
@@ -142,7 +142,9 @@ namespace nModBusWeb
                 dr[7] = register_Min_2[0].ToString();
                 dr[8] = register_Temperature_2[0].ToString();
                 dr[9] = register_Pressure_2[0].ToString();
+
                 dt.Rows.Add(dr);
+                serialPort.Close();
             }
             catch (Exception ex) { serialPort.Close(); Console.WriteLine(ex.ToString()); }
             return dt;
@@ -175,16 +177,20 @@ namespace nModBusWeb
 
         protected void txtMachineID_TextChanged(object sender, EventArgs e)
         {
-            App_Code.func func = new App_Code.func();
-            DataRow dr = func.getDrOvenLocationFromMsdb(txtMachineID.Text.Trim());
-            txtArea.Text = dr.ItemArray.Length > 0 ? dr["Area"].ToString() : null;
-            txtOvenID.Text = dr.ItemArray.Length > 0 ? dr["Oven_ID"].ToString() : null;
-            txt_TextChanged(null, null);
+            try
+            {
+                App_Code.func func = new App_Code.func();
+                DataRow dr = func.getDrOvenLocationFromMsdb(txtMachineID.Text.Trim().ToUpper());
+                txtArea.Text = dr.ItemArray.Length > 0 ? dr["Area"].ToString() : null;
+                txtOvenID.Text = dr.ItemArray.Length > 0 ? dr["Oven_ID"].ToString() : null;
+                txt_TextChanged(null, null);
+            }
+            catch (Exception ex) { Console.WriteLine(ex.ToString()); }
         }
         protected void txtBC_TextChanged(object sender, EventArgs e)
         {
             App_Code.func func = new App_Code.func();
-            txtAdhesive.Text = func.getAdhesiveFromIntrack(txtBC.Text.Trim());
+            txtAdhesive.Text = func.getAdhesiveFromIntrack(txtBC.Text.Trim().ToUpper());
             txt_TextChanged(null, null);
         }        
         protected void txt_TextChanged(object sender, EventArgs e)
@@ -192,12 +198,23 @@ namespace nModBusWeb
             App_Code.func func = new App_Code.func();
 
             DataTable dt = new DataTable();
-            dt = func.getDataFromMsdb(txtArea.Text.Trim(), txtPTN.Text.Trim(), txtAdhesive.Text.Trim());
+            dt = func.getDataFromMsdb(txtArea.Text.Trim().ToUpper(), txtPTN.Text.Trim().ToUpper(), txtAdhesive.Text.Trim().ToUpper());
             GridViewList.DataSource = dt;
             GridViewList.DataBind();
             dtGv = dt;
             showPage();
 
+            //Check isNull
+            if (!string.IsNullOrEmpty(txtUser.Text) && !string.IsNullOrEmpty(txtMachineID.Text) && !string.IsNullOrEmpty(txtBC.Text) &&
+               !string.IsNullOrEmpty(txtArea.Text) && !string.IsNullOrEmpty(txtPTN.Text) && !string.IsNullOrEmpty(txtAdhesive.Text) &&
+               !string.IsNullOrEmpty(txtOvenID.Text))
+            {
+                GridViewList.Columns[5].Visible = true;
+            }
+            else
+            {
+                GridViewList.Columns[5].Visible = false;
+            }
         }
         protected void GridViewList_PageIndexChanging(object sender, GridViewPageEventArgs e)
         {
@@ -212,110 +229,141 @@ namespace nModBusWeb
 
             if (e.CommandName.Equals("Run"))
             {
-                string[] argument = e.CommandArgument.ToString().Split(',');
-                string pk_Area = argument[0];
-                string pk_Adhesive = argument[1];
-                string pk_BakeProgram = argument[2];
+                
+                    string[] argument = e.CommandArgument.ToString().Split(',');
+                    string pk_Area = argument[0];
+                    string pk_Adhesive = argument[1];
+                    string pk_BakeProgram = argument[2];
 
-                //===============================================================================
-                //取出對應該area、adhesive、bake_Program的Comport
-                //===============================================================================
-                string str = string.Format(@"Select Comport From Oven_Assy_Location Where Machine_ID=:machine_ID");
-                object[] p = new object[] { Request.QueryString["Machine_ID"].ToUpper() };
-                DataTable dt = ado.loadDataTable(str, p, "Oven_Assy_Location");
-                if (dt.Rows.Count < 1) { ScriptManager.RegisterStartupScript(this, this.GetType(), "", string.Format(@"alert('can not find this oven 【{0}】');", Request.QueryString["Machine_ID"].ToUpper()), true); }
-
-
-                //===============================================================================
-                //取出 oven_assy_fe_baketime parameters
-                //===============================================================================
-                string str_BakeTime = string.Format(@"Select Process_1, Hour_1, Min_1, Temperature_1, Pressure_1,
-                                                             Process_2, Hour_2, Min_2, Temperature_2, Pressure_2,baketime
-                                                      From   OVEN_ASSY_FE_BakeTime
-                                                      Where  Area like '%{0}%'
-                                                             And Adhesive like '%{1}%'
-                                                             And Bake_Program like '%{2}%'", pk_Area.ToUpper(), pk_Adhesive.ToUpper(), pk_BakeProgram.ToUpper());
-                DataTable dt_BakeTime = ado.loadDataTable(str_BakeTime, null, "Oven_Assy_Fe_BakeTime");
-
-                //===============================================================================
-                //取出Parameters from oven 
-                //===============================================================================
-                DataTable dt_ovenParameters = getOvenParameters(dt.Rows[0]["Comport"].ToString());
-
-
-                //===============================================================================
-                //比對PTN, 如果比對正確, ON機台 & Log(Temperature & Pressure)                
-                //===============================================================================
-                DataRow dr_bakeTime = dt_BakeTime.Rows[0];
-                DataRow dr_ovenParameters = dt_ovenParameters.Rows[0];
-                string[] arrField = new string[]{"Process_1", "Hour_1", "Min_1", "Temperature_1","Pressure_1",
-                                                 "Process_2", "Hour_2", "Min_2", "Temperature_2","Pressure_2"};
-                bool check = true;
-                foreach (string field in arrField)
-                {
-                    if (dr_bakeTime[field].ToString() != dr_ovenParameters[field].ToString())
-                    {
-                        ScriptManager.RegisterStartupScript(this, this.GetType(), "", "alert('PTN recipe can not map to the Oven parameters');", true);
-                        check = false;
-                        break;
-                    }
-                }                
-                if (check) 
-                {
                     //============================================================================
                     //Check oven status 
                     //============================================================================
                     string ovenStr = string.Format(@"Select * From Oven_Assy_Status Where PMID = '{0}'", txtMachineID.Text.Trim().ToUpper());
                     DataTable dtStatus = ado.loadDataTable(ovenStr, null, "Oven_Assy_Status");
-                    if (dtStatus.Rows.Count > 0) { ScriptManager.RegisterStartupScript(this, this.GetType(), "", "alert(this oven is working, please check again!);", true); }
+                    if (dtStatus.Rows.Count > 0) { ScriptManager.RegisterStartupScript(this, this.GetType(), "", "alert('this oven is working, please check again!');", true); }
                     else
                     {
-                        //============================================================================
-                        //Write to Oven_Assy_Status Log
-                        //============================================================================
                         try
                         {
-                            App_Code.func fc = new App_Code.func();
-                            DataTable mdt = fc.getFromIntrack(txtBC.Text.Trim().ToUpper());
-                            if (mdt == null) { ScriptManager.RegisterStartupScript(this, this.GetType(), "", string.Format(@"alert('mdt == null');"), true); }
+                            //===============================================================================
+                            //取出對應該area、adhesive、bake_Program的Comport
+                            //===============================================================================
+                            string str = string.Format(@"Select Comport From Oven_Assy_Location Where Machine_ID=:machine_ID");
+                            object[] p = new object[] { txtMachineID.Text.Trim().ToUpper() };
+                            DataTable dt = ado.loadDataTable(str, p, "Oven_Assy_Location");
+                            if (dt.Rows.Count < 1) { ScriptManager.RegisterStartupScript(this, this.GetType(), "", string.Format(@"alert('can not find this oven 【{0}】');", txtMachineID.Text.Trim().ToUpper()), true); }
+                            
+                            //===============================================================================
+                            //取出 oven_assy_fe_baketime parameters
+                            //===============================================================================
+                            string str_BakeTime = string.Format(@"Select Process_1, Hour_1, Min_1, Temperature_1, Pressure_1,
+                                                             Process_2, Hour_2, Min_2, Temperature_2, Pressure_2,baketime
+                                                      From   OVEN_ASSY_FE_BakeTime
+                                                      Where  Area like '%{0}%'
+                                                             And Adhesive like '%{1}%'
+                                                             And Bake_Program like '%{2}%'", pk_Area.ToUpper(), pk_Adhesive.ToUpper(), pk_BakeProgram.ToUpper());
+                            DataTable dt_BakeTime = ado.loadDataTable(str_BakeTime, null, "Oven_Assy_Fe_BakeTime");
+                            if (dt_BakeTime.Rows.Count < 1) { ScriptManager.RegisterStartupScript(this, this.GetType(), "", string.Format(@"alert('can not read this PTN 【{0}】parameters');", txtPTN.Text.Trim().ToUpper()), true); }
 
-                            string alertStr = string.Format(@"typename = {0}, ED_12NC = {1}, Diffusion = {2}, Package = {3}, Glue = {4}",
-                                                                 mdt.Rows[0]["TypeName"].ToString(), mdt.Rows[0]["ED_12NC"].ToString(),
-                                                                 mdt.Rows[0]["Diffusion"].ToString(), mdt.Rows[0]["package"].ToString(),
-                                                                 mdt.Rows[0]["Glue"].ToString());
-                            //Response.Write(alertStr);
+                            //===============================================================================
+                            //取出Parameters from oven 
+                            //===============================================================================
+                            DataTable dt_ovenParameters = getOvenParameters(dt.Rows[0]["Comport"].ToString());
+                            if (dt_ovenParameters.Rows.Count < 1) { ScriptManager.RegisterStartupScript(this, this.GetType(), "", string.Format(@"alert('can not read this oven 【{0}】parameters, Comport:{1}');", txtMachineID.Text.Trim().ToUpper(), dt.Rows[0]["Comport"].ToString()), true); }
 
-                            string insertStr = string.Format(@"Insert into oven_Assy_Status(ID,PMID,AREA,OVEN_ID,PTN,Batch_NO,
-                                                                                            Type_Name,NC_Code,Diffusion,Package,
-                                                                                            Bake_Time,In_Time,Est_Out_Time,Op_ID,Glue)
-                                                   Values (:ID,:PMID,:AREA,:OVEN_ID,:PTN,:Batch_NO,
-                                                           :Type_Name,:NC_Code,:Diffusion,:Package,
-                                                           :Bake_Time,:In_Time,:Est_Out_Time,:Op_ID,:Glue)");
-                            object[] para = new object[] { DateTime.Now.ToString("yyyyMMdd_hhmmss"),txtMachineID.Text.Trim().ToUpper(),pk_Area,txtOvenID.Text.Trim().ToUpper(),txtPTN.Text.Trim().ToUpper(),txtBC.Text.Trim().ToUpper(),
-                                                           mdt.Rows[0]["TypeName"].ToString().ToUpper(), mdt.Rows[0]["ED_12NC"].ToString(),mdt.Rows[0]["Diffusion"].ToString(),mdt.Rows[0]["package"].ToString(),
-                                                           dt_BakeTime.Rows[0]["bakeTime"].ToString(),DateTime.Now,DateTime.Now.AddMinutes(Convert.ToDouble(dt_BakeTime.Rows[0]["bakeTime"].ToString())),txtUser.Text.Trim(),mdt.Rows[0]["Glue"].ToString().ToUpper()};
-                            string result = ado.dbNonQuery(insertStr, para).ToString();
-                            if (result.Equals("SUCCESS")) { ScriptManager.RegisterStartupScript(this, this.GetType(), "", "alert('insert success');", true); }
+                            //===============================================================================
+                            //比對PTN, 如果比對正確, ON機台 & Log(Temperature & Pressure)                
+                            //===============================================================================
+                            #region check
+
+                            DataRow dr_bakeTime = dt_BakeTime.Rows[0];
+                            DataRow dr_ovenParameters = dt_ovenParameters.Rows[0];
+                            string[] arrField = new string[]{"Process_1", "Hour_1", "Min_1", "Temperature_1","Pressure_1",
+                                                             "Process_2", "Hour_2", "Min_2", "Temperature_2","Pressure_2"};
+                            bool check = true;
+                            foreach (string field in arrField)
+                            {
+                                if (dr_bakeTime[field].ToString() != dr_ovenParameters[field].ToString())
+                                {
+                                    ScriptManager.RegisterStartupScript(this, this.GetType(), "", "alert('PTN recipe can not map to the Oven parameters');", true);
+                                    check = false;
+                                    break;
+                                }
+                            }
+                            if (check)
+                            {
+                                //============================================================================
+                                //Write to Oven_Assy_Status Log
+                                //============================================================================
+
+                                App_Code.func fc = new App_Code.func();
+                                DataTable mdt = fc.getFromIntrack(txtBC.Text.Trim().ToUpper());
+                                if (mdt == null) { ScriptManager.RegisterStartupScript(this, this.GetType(), "", string.Format(@"alert('mdt == null');"), true); }
+
+                                string alertStr = string.Format(@"typename = {0}, ED_12NC = {1}, Diffusion = {2}, Package = {3}, Glue = {4}",
+                                                                     mdt.Rows[0]["TypeName"].ToString(), mdt.Rows[0]["ED_12NC"].ToString(),
+                                                                     mdt.Rows[0]["Diffusion"].ToString(), mdt.Rows[0]["package"].ToString(),
+                                                                     mdt.Rows[0]["Glue"].ToString());
+                                //Response.Write(alertStr);
+
+                                string insertStr = string.Format(@"Insert into oven_Assy_Status(ID,PMID,AREA,OVEN_ID,PTN,Batch_NO,
+                                                                                        Type_Name,NC_Code,Diffusion,Package,
+                                                                                        Bake_Time,In_Time,Est_Out_Time,Op_ID,Glue)
+                                               Values (:ID,:PMID,:AREA,:OVEN_ID,:PTN,:Batch_NO,
+                                                       :Type_Name,:NC_Code,:Diffusion,:Package,
+                                                       :Bake_Time,:In_Time,:Est_Out_Time,:Op_ID,:Glue)");
+                                object[] para = new object[] { DateTime.Now.ToString("yyyyMMdd_hhmmss"),txtMachineID.Text.Trim().ToUpper(),pk_Area,txtOvenID.Text.Trim().ToUpper(),txtPTN.Text.Trim().ToUpper(),txtBC.Text.Trim().ToUpper(),
+                                                       mdt.Rows[0]["TypeName"].ToString().ToUpper(), mdt.Rows[0]["ED_12NC"].ToString(),mdt.Rows[0]["Diffusion"].ToString(),mdt.Rows[0]["package"].ToString(),
+                                                       dt_BakeTime.Rows[0]["bakeTime"].ToString(),DateTime.Now,DateTime.Now.AddMinutes(Convert.ToDouble(dt_BakeTime.Rows[0]["bakeTime"].ToString())),txtUser.Text.Trim(),mdt.Rows[0]["Glue"].ToString().ToUpper()};
+                                string result = ado.dbNonQuery(insertStr, para).ToString();
+                                if (result.Equals("SUCCESS")) { ScriptManager.RegisterStartupScript(this, this.GetType(), "", "alert('Success, the oven is working.');", true); }
+
+
+                                //============================================================================
+                                //Comport/ MachineID/ LimitTemperature/ LimitPressure/ TotalTime(minute)
+                                //============================================================================
+                                //Process_1, Hour_1, Min_1, Temperature_1, Pressure_1,
+                                //Process_2, Hour_2, Min_2, Temperature_2, Pressure_2
+                                callWebService(string.Format(@"{0} {1} {2}|{3}", dt.Rows[0]["Comport"].ToString(),
+                                                                             txtMachineID.Text.Trim().ToUpper(),
+                                                                             string.Format(@"{0}-{1}-{2}-{3}-{4}", dr_bakeTime["Process_1"].ToString(), dr_bakeTime["Hour_1"].ToString(), dr_bakeTime["Min_1"].ToString(), dr_bakeTime["Temperature_1"].ToString(), dr_bakeTime["Pressure_1"].ToString()),
+                                                                             string.Format(@"{0}-{1}-{2}-{3}-{4}", dr_bakeTime["Process_2"].ToString(), dr_bakeTime["Hour_2"].ToString(), dr_bakeTime["Min_2"].ToString(), dr_bakeTime["Temperature_2"].ToString(), dr_bakeTime["Pressure_2"].ToString())
+                                                                             ));
+
+
+
+                            }
+                            #endregion
                         }
                         catch (Exception ex)
                         {
-                            Console.WriteLine(ex.ToString());
-                            ScriptManager.RegisterStartupScript(this, this.GetType(), "", string.Format(@"alert('fail');"), true);
+                            Console.WriteLine(ex.ToString());                            
+                            ScriptManager.RegisterStartupScript(this, this.GetType(), "", string.Format(@"alert('the process fail, please inform the engineer.');"), true);
                         }
-
-                        //============================================================================
-                        //Comport/ MachineID/ LimitTemperature/ LimitPressure/ TotalTime(minute)
-                        //============================================================================
-                        callWebService(string.Format(@"{0} {1} {2} {3} {4}", dt.Rows[0]["Comport"].ToString(),
-                                                                          txtMachineID.Text.Trim().ToUpper(),
-                                                                          dr_bakeTime["Temperature_1"].ToString(),
-                                                                          dr_bakeTime["Pressure_1"].ToString(),
-                                                                          dr_bakeTime["baketime"].ToString()));
-
-
                     }
-                }
             }            
+        }
+        protected void GridViewList_RowDataBound(object sender, GridViewRowEventArgs e)
+        {
+//            if (e.Row.RowType == DataControlRowType.DataRow)
+//            {
+//                App_Code.AdoDbConn ado = new App_Code.AdoDbConn(App_Code.AdoDbConn.AdoDbType.Oracle, conn);
+
+//                string pk_Area = GridViewList.DataKeys[e.Row.RowIndex].Values[0].ToString();
+//                string pk_Adhesive = GridViewList.DataKeys[e.Row.RowIndex].Values[1].ToString();
+//                string pk_bakeProgram = GridViewList.DataKeys[e.Row.RowIndex].Values[2].ToString();
+
+//                string str_BakeTime = string.Format(@"Select Process_1, Hour_1, Min_1, Temperature_1, Pressure_1,
+//                                                             Process_2, Hour_2, Min_2, Temperature_2, Pressure_2,baketime
+//                                                      From   OVEN_ASSY_FE_BakeTime
+//                                                      Where  Area like '%{0}%'
+//                                                             And Adhesive like '%{1}%'
+//                                                             And Bake_Program like '%{2}%'", pk_Area.ToUpper(), pk_Adhesive.ToUpper(), pk_BakeProgram.ToUpper());
+//                DataTable dt_BakeTime = ado.loadDataTable(str_BakeTime, null, "Oven_Assy_Fe_BakeTime");
+
+//                ImageButton btn = (ImageButton)e.Row.FindControl("btn2");
+//                btn.ImageUrl = "";
+//            }
         }
         protected void lbnFirst_Click(object sender, EventArgs e)
         {
@@ -396,5 +444,6 @@ namespace nModBusWeb
             }
             catch (Exception ex) { Console.WriteLine(ex.ToString()); }
         }
+        
 }
 }

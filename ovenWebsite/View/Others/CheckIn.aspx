@@ -7,6 +7,13 @@
     <asp:UpdatePanel ID="up" runat="server">
     <ContentTemplate>
     <h2>Check In</h2>
+    <div style='font-family: georgia, serif;
+                               font-size: 15px;
+                               font-weight: bold;'>
+    產品進烤箱 or Plasma <br />
+    請依序輸入: 1. <font color='red'>薪號</font> 2. <font color='red'>烤箱 or Plasma 編號 (PM Number)</font> 3. <font color='red'>PTN (程式)</font> 4. <font color='red'>流程卡號 (Batch no.) </font>
+    </div>
+    <br />
         <div>
             <table> 
                 <tr>
@@ -23,34 +30,39 @@
                                font-size: 15px;
                                font-weight: bold;'>Step2.</td>
                     <td>MachineID：</td>
-                    <td colspan='5'><asp:TextBox ID="txtMachineID" runat="server" AutoPostBack="true" ontextchanged="txtMachineID_TextChanged" ></asp:TextBox></td>
+                    <td><asp:TextBox ID="txtMachineID" runat="server" AutoPostBack="true" ontextchanged="txtMachineID_TextChanged" ></asp:TextBox></td>
+                    <td>Oven_ID：</td>
+                    <td><asp:TextBox ID="txtOvenID" runat="server" AutoPostBack="true" ></asp:TextBox></td>
+                    <td>Oven Area：</td>
+                    <td><asp:TextBox ID="txtArea" runat="server" ontextchanged="txt_TextChanged" AutoPostBack="true"></asp:TextBox></td>
                 </tr>
                 <tr>
                     <td style='font-family: georgia, serif;
                                color: #9E3737;
                                font-size: 15px;
                                font-weight: bold;'>Step3.</td>
-                    <td>Batch Card：</td>
-                    <td colspan='5'><asp:TextBox ID="txtBC" runat="server" AutoPostBack="true" ontextchanged="txtBC_TextChanged"></asp:TextBox></td>
+                    
+                    <td>PTN：</td>
+                    <td><asp:TextBox ID="txtPTN" runat="server" ontextchanged="txt_TextChanged" AutoPostBack="true"></asp:TextBox></td>
+                    <td>Adhesive：</td>
+                    <td colspan='3'><asp:TextBox ID="txtAdhesive" runat="server" ontextchanged="txt_TextChanged" AutoPostBack="true"></asp:TextBox></td>
+                    
                 </tr>
                 <tr>
                     <td style='font-family: georgia, serif;
                                color: #9E3737;
                                font-size: 15px;
                                font-weight: bold;'>Step4.</td>
-                    <td>Oven Area：</td>
-                    <td><asp:TextBox ID="txtArea" runat="server" ontextchanged="txt_TextChanged" AutoPostBack="true"></asp:TextBox></td>
-                    <td>PTN：</td>
-                    <td><asp:TextBox ID="txtPTN" runat="server" ontextchanged="txt_TextChanged" AutoPostBack="true"></asp:TextBox></td>
-                    <td>Adhesive：<asp:TextBox ID="txtAdhesive" runat="server" ontextchanged="txt_TextChanged" AutoPostBack="true"></asp:TextBox></td>
-                    <td>Oven_ID：<asp:TextBox ID="txtOvenID" runat="server" AutoPostBack="true" ></asp:TextBox></td>
+                    <td>Batch Card：</td>
+                    <td colspan='5'><asp:TextBox ID="txtBC" runat="server" AutoPostBack="true" ontextchanged="txtBC_TextChanged"></asp:TextBox></td>
                 </tr>
+                
             </table>
             <asp:GridView ID="GridViewList" runat="server" BorderWidth="1px" BorderStyle="Solid"
             BorderColor="#999999" BackColor="White" OnPageIndexChanging="GridViewList_PageIndexChanging"
             AllowPaging="True" OnRowCommand="GridViewList_RowCommand"
             GridLines="Vertical" ForeColor="Black" CellPadding="3" AutoGenerateColumns="False"
-            DataKeyNames="Adhesive">
+            DataKeyNames="Area,Adhesive,bake_program">
             <Columns>
                 <asp:TemplateField HeaderText="No">
                     <ItemTemplate>
@@ -62,10 +74,10 @@
                 <asp:BoundField DataField="Adhesive" HeaderText="Adhesive" ReadOnly="True"></asp:BoundField>
                 <asp:BoundField DataField="Bake_Program" HeaderText="Bake_Program" ReadOnly="True"></asp:BoundField>
                 <asp:BoundField DataField="BakeTime" HeaderText="BakeTime" ReadOnly="True"></asp:BoundField>
-                <asp:TemplateField HeaderText="Run" Visible="true">
+                <asp:TemplateField HeaderText="Run" Visible="false">
                     <ItemTemplate>                        
                         <asp:ImageButton ID="btn2" CommandName="Run" OnClientClick="return confirm('Are you sure of comparing this PTN?');"
-                                CommandArgument='<%# Eval("Area") +","+ Eval("Adhesive") +","+ Eval("Bake_Program") %>' ImageUrl="../../images/ball_red.gif"
+                                CommandArgument='<%# Eval("Area") +","+ Eval("Adhesive") +","+ Eval("Bake_Program") %>' ImageUrl="../../images/icon_import.png"
                                 runat="server" Width="18px" ToolTip="Run"  />
                     </ItemTemplate>             
                     <HeaderStyle Width="5%" />
@@ -98,9 +110,6 @@
             <AlternatingRowStyle BackColor="#CCCCCC"></AlternatingRowStyle>
         </asp:GridView>
         </div>
-
-
-        
         </ContentTemplate>
     </asp:UpdatePanel>
 </asp:Content>

@@ -55,7 +55,10 @@ namespace nModBusWeb.App_Code
         {
             string str = string.Format(@"Select Area,Adhesive,Bake_Program,BakeTime
                                          From spare_part.OVEN_ASSY_FE_BAKETIME
-                                         Where Area like '%{0}%' and Bake_Program like '%{1}%' and Adhesive like '%{2}%'", _Area, _PTN, _Adhesive);
+                                         Where Area {0} and Bake_Program {1} and Adhesive {2}",
+                                               string.IsNullOrEmpty(_Area) ? " like '%'" : string.Format(@" ='{0}'", _Area),
+                                               string.IsNullOrEmpty(_PTN) ? " like '%'" : string.Format(@" ='{0}'", _PTN),
+                                               string.IsNullOrEmpty(_Adhesive) ? " like '%'" : string.Format(@" ='{0}'", _Adhesive));
                      
             if (string.IsNullOrEmpty(_Area) && string.IsNullOrEmpty(_PTN) && string.IsNullOrEmpty(_Adhesive))
             {
