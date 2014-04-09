@@ -31,71 +31,75 @@ namespace ovenWin
 
         static void Main(string[] args)
         {
-            // create a new SerialPort object with default settings.
-            serialPort = new SerialPort();
-
-            serialPort.BaudRate = 9600;
-            serialPort.Parity = Parity.None;
-            serialPort.StopBits = StopBits.One;
-            serialPort.DataBits = 8;
-
-            //args = new string[] { "COM10", "OV-135", "1-0-2-110-7|2-0-2-126-7" }; //LOCAL TEST
-            if (args != null && args.Length > 0)
+            try
             {
-                //args[0] -> COM
-                //args[1] -> Machine_ID
-                //args[2] -> PROCESS-1.2.3... (Process1-Hour1-Min1-Temp1-Pressure1|Process2-Hour2-Min2-Temp2-Pressure2)
-                
-                // set the appropriate properties.
-                serialPort.PortName = args[0].ToString();   
-                Machine_ID = args[1].ToString();
-                
-                string[] arrPara = args[2].ToString().Split('|');
-                bakeTime = Convert.ToInt32(arrPara[0].Split('-')[2]) * 60 * 1000;
-                LimitTemp = Convert.ToInt32(arrPara[0].Split('-')[3]);
-                LimitPressure = Convert.ToInt32(arrPara[0].Split('-')[4]);
-                Console.WriteLine("bakeTime" + bakeTime + Environment.NewLine);
-                Console.WriteLine("LimitTemp" + LimitTemp + Environment.NewLine);
-                Console.WriteLine("LimitPressure: "+ LimitPressure + Environment.NewLine);  
-                if (arrPara.Length > 1) 
+                // create a new SerialPort object with default settings.
+                serialPort = new SerialPort();
+
+                serialPort.BaudRate = 9600;
+                serialPort.Parity = Parity.None;
+                serialPort.StopBits = StopBits.One;
+                serialPort.DataBits = 8;
+
+                //args = new string[] { "COM10", "OV-135", "1-0-2-110-7|2-0-2-126-7" }; //LOCAL TEST
+                if (args != null && args.Length > 0)
                 {
-                    bakeTime2 = Convert.ToInt32(arrPara[1].Split('-')[2]) * 60 * 1000;
-                    LimitTemp2 = Convert.ToInt32(arrPara[1].Split('-')[3]);
-                    LimitPressure2 = Convert.ToInt32(arrPara[1].Split('-')[4]);
-                    Console.WriteLine("bakeTime2" + bakeTime2 + Environment.NewLine);
-                    Console.WriteLine("LimitTemp2" + LimitTemp2 + Environment.NewLine);
-                    Console.WriteLine("LimitPressure2: " + LimitPressure2 + Environment.NewLine); 
+                    //args[0] -> COM
+                    //args[1] -> Machine_ID
+                    //args[2] -> PROCESS-1.2.3... (Process1-Hour1-Min1-Temp1-Pressure1|Process2-Hour2-Min2-Temp2-Pressure2)
+
+                    // set the appropriate properties.
+                    serialPort.PortName = args[0].ToString();
+                    Machine_ID = args[1].ToString();
+
+                    string[] arrPara = args[2].ToString().Split('|');
+                    bakeTime = Convert.ToInt32(arrPara[0].Split('-')[2]) * 60 * 1000;
+                    LimitTemp = Convert.ToInt32(arrPara[0].Split('-')[3]);
+                    LimitPressure = Convert.ToInt32(arrPara[0].Split('-')[4]);
+                    Console.WriteLine("bakeTime" + bakeTime + Environment.NewLine);
+                    Console.WriteLine("LimitTemp" + LimitTemp + Environment.NewLine);
+                    Console.WriteLine("LimitPressure: " + LimitPressure + Environment.NewLine);
+                    if (arrPara.Length > 1)
+                    {
+                        bakeTime2 = Convert.ToInt32(arrPara[1].Split('-')[2]) * 60 * 1000;
+                        LimitTemp2 = Convert.ToInt32(arrPara[1].Split('-')[3]);
+                        LimitPressure2 = Convert.ToInt32(arrPara[1].Split('-')[4]);
+                        Console.WriteLine("bakeTime2" + bakeTime2 + Environment.NewLine);
+                        Console.WriteLine("LimitTemp2" + LimitTemp2 + Environment.NewLine);
+                        Console.WriteLine("LimitPressure2: " + LimitPressure2 + Environment.NewLine);
+                    }
+                    ScanTime = bakeTime + bakeTime2;
+
+                    Console.WriteLine("COM: " + args[0].ToString() + Environment.NewLine);
+                    Console.WriteLine("MachineID: " + args[1].ToString() + Environment.NewLine);
+                    Console.WriteLine("args[2]: " + args[2].ToString() + Environment.NewLine);
+                    Console.WriteLine("ScanTime: " + ScanTime + Environment.NewLine);
+
+                    serialPort.Open();
+                    // create Modbus RTU Master by the comport client
+                    //document->Modbus.Device.Namespace->ModbusSerialMaster Class->CreateRtu Method
+                    master = ModbusSerialMaster.CreateRtu(serialPort);
+                    master.Transport.ReadTimeout = 300;
+
+                    timer = new Timer();
+                    timer.Interval = TimeInterval; //set interval of checking here
+                    timer.Elapsed += delegate
+                    {
+                        //timer_Elapsed(); //old 
+                        timer_Elapsed();//new 
+                    };
+
+                    Mode(machineMode.open);// active oven power
+                    timer.Start();
+                    Console.ReadKey(true);
                 }
-                ScanTime = bakeTime + bakeTime2;
-
-                Console.WriteLine("COM: " + args[0].ToString() + Environment.NewLine);
-                Console.WriteLine("MachineID: " + args[1].ToString() + Environment.NewLine);
-                Console.WriteLine("args[2]: " + args[2].ToString() + Environment.NewLine);                
-                Console.WriteLine("ScanTime: " + ScanTime + Environment.NewLine);
-
-                serialPort.Open();
-                // create Modbus RTU Master by the comport client
-                //document->Modbus.Device.Namespace->ModbusSerialMaster Class->CreateRtu Method
-                master = ModbusSerialMaster.CreateRtu(serialPort);                
-                master.Transport.ReadTimeout = 300;
-
-                timer = new Timer();
-                timer.Interval = TimeInterval; //set interval of checking here
-                timer.Elapsed += delegate
+                else
                 {
-                    //timer_Elapsed(); //old 
-                    timer_Elapsed();//new 
-                };
-                
-                Mode(machineMode.open);// active oven power
-                timer.Start();
-                Console.ReadKey(true);
+                    Console.WriteLine(string.Format(@"No args[]. {0}.", DateTime.Now.ToString()));
+                    Console.ReadKey(true);
+                }
             }
-            else
-            {
-                Console.WriteLine(string.Format(@"No args[]. {0}.", DateTime.Now.ToString()));
-                Console.ReadKey(true);
-            }
+            catch (Exception ex) { Console.WriteLine("Exception: " + ex.ToString()); }
         }//new
         static void timer_Elapsed()//new 
         {
@@ -207,6 +211,8 @@ namespace ovenWin
             catch (Exception exception)
             {
                 #region error code
+
+                Mode(machineMode.close);
 
                 //Connection exception
                 //No response from server.
@@ -484,28 +490,24 @@ namespace ovenWin
         {
             try
             {
-                App_Code.FunctionCode fc = new App_Code.FunctionCode();
-                startAddress = fc.Working;
-
                 switch (_mode.ToString())
                 {
                     case "open":
-                        master.WriteSingleCoil(slaveID, (ushort)startAddress, true);//write
-                        bool[] Coil_status = master.ReadCoils(slaveID, startAddress, numOfPoints);
-                        if (Coil_status[0] == true) { Console.WriteLine("The Oven is ON"); }
-                        else { Console.WriteLine("The Oven is OFF"); }
+                        App_Code.FunctionCode fc = new App_Code.FunctionCode();
+                        startAddress = fc.OnBtnTwinkle;
+                        master.WriteSingleRegister(slaveID, (ushort)startAddress, (ushort)Convert.ToInt32("1"));//write
+                        ushort[] register_read = master.ReadHoldingRegisters(slaveID, (ushort)startAddress, numOfPoints);//read
+                        Console.WriteLine(string.Format(@"十進位：{0}{1}十六進位：{2}", register_read[0].ToString(), Environment.NewLine, Convert.ToString(Convert.ToInt32(register_read[0].ToString()), 16)));
                         break;
                     case "close":
-                        master.WriteSingleCoil(slaveID, (ushort)startAddress, false);//write
-                        bool[] Coil2_status = master.ReadCoils(slaveID, startAddress, numOfPoints);
-                        if (Coil2_status[0] == true) { Console.WriteLine("The Oven is ON"); }
-                        else { Console.WriteLine("The Oven is OFF"); }
                         serialPort.Close();
                         break;
                 }
             }
             catch (Exception exception)
             {
+                serialPort.Close();
+
                 //Connection exception
                 //No response from server.
                 //The server maybe close the com port, or response timeout.
