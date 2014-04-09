@@ -29,9 +29,10 @@ namespace nModBusWeb
         {
             if (!IsPostBack)
             {
+                //push test
                 App_Code.func fc = new App_Code.func();
                 fc.checkRole(Page.Master);
-
+                 
                 txtUser.Text = Request.QueryString["USER"];
                 txtMachineID.Text = Request.QueryString["Machine_ID"];
 
