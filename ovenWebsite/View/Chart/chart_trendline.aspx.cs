@@ -11,9 +11,7 @@ namespace nModBusWeb
     public partial class chart_trendline : System.Web.UI.Page
     {
         static private string conn = System.Configuration.ConfigurationManager.ConnectionStrings["OVEN"].ToString();
-        //query
-        static private string mahcineID, StartTime, EndTime;
-
+        static private int out_width = 1100, out_hight = 500, in_width = 1000, in_hight = 400;
         //
         // Page Load event handler
         //
@@ -21,11 +19,11 @@ namespace nModBusWeb
         {
             if (!IsPostBack)
             {
-                mahcineID = Request.QueryString["machineID"];
-                StartTime = Request.QueryString["StartTime"];
-                EndTime = Request.QueryString["EndTime"];
-
-                if (string.IsNullOrEmpty(mahcineID))
+                txtMachineID.Text = Request.QueryString["machineID"];
+                txtStart.Text = Request.QueryString["StartTime"];
+                txtEnd.Text = Request.QueryString["EndTime"];
+                
+                if (string.IsNullOrEmpty(txtMachineID.Text))
                 {
                     #region Sample
 
@@ -43,12 +41,14 @@ namespace nModBusWeb
 
                     // Create a XYChart object of size 500 x 320 pixels, with a pale purpule
                     // (0xffccff) background, a black border, and 1 pixel 3D border effect.
-                    XYChart c = new XYChart(700, 520, 0xffccff, 0x000000, 1);
+                    //XYChart c = new XYChart(700, 520, 0xffccff, 0x000000, 1);
+                    XYChart c = new XYChart(out_width, out_hight, 0xffccff, 0x000000, 1);
 
                     // Set the plotarea at (55, 45) and of size 420 x 210 pixels, with white
                     // background. Turn on both horizontal and vertical grid lines with light grey
                     // color (0xc0c0c0)
-                    c.setPlotArea(55, 45, 600, 400, 0xffffff, -1, -1, 0xc0c0c0, -1);
+                    //c.setPlotArea(55, 45, 600, 400, 0xffffff, -1, -1, 0xc0c0c0, -1);
+                    c.setPlotArea(55, 45, in_width, in_hight, 0xffffff, -1, -1, 0xc0c0c0, -1);
 
                     // Add a legend box at (55, 25) (top of the chart) with horizontal layout. Use 8
                     // pts Arial font. Set the background and border color to Transparent.
@@ -111,20 +111,15 @@ namespace nModBusWeb
         
         protected void btnQuery_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(mahcineID)) { mahcineID = txtMachineID.Text.Trim().ToUpper(); }
-            if (string.IsNullOrEmpty(StartTime)) { StartTime = txtStart.Text; }
-            if (string.IsNullOrEmpty(EndTime)) { EndTime = txtEnd.Text; }
-
             if (!ddlkind.SelectedValue.Contains("please"))
-            {
-                
+            {                
                 App_Code.AdoDbConn ado = new App_Code.AdoDbConn(App_Code.AdoDbConn.AdoDbType.Oracle, conn);
                 string str = string.Format(@"Select     Time,Data,kindName,Measure 
                                              From       oven_assy_log L
                                              Inner join oven_assy_logkind LK on L.oven_assy_logkindid=Lk.oven_assy_logkindid
                                              Where      Machine_ID = '{0}'
                                              And        Time >= to_date('{1}', 'YYYY/MM/DD') And Time <= to_date('{2}', 'YYYY/MM/DD')
-                                             And        L.oven_assy_logkindid = '{3}'", mahcineID, StartTime, EndTime, ddlkind.SelectedValue);
+                                             And        L.oven_assy_logkindid = '{3}'", txtMachineID.Text.Trim().ToUpper(),txtStart.Text, txtEnd.Text, ddlkind.SelectedValue);
                 DataTable dt = new DataTable();
                 dt = ado.loadDataTable(str, null, "oven_assy_log");
 
@@ -157,12 +152,14 @@ namespace nModBusWeb
             
             // Create a XYChart object of size 500 x 320 pixels, with a pale purpule
             // (0xffccff) background, a black border, and 1 pixel 3D border effect.
-            XYChart c = new XYChart(700, 520, 0xffccff, 0x000000, 1);
+            //XYChart c = new XYChart(700, 520, 0xffccff, 0x000000, 1);
+            XYChart c = new XYChart(out_width, out_hight, 0xffccff, 0x000000, 1);
 
             // Set the plotarea at (55, 45) and of size 420 x 210 pixels, with white
             // background. Turn on both horizontal and vertical grid lines with light grey
             // color (0xc0c0c0)
-            c.setPlotArea(55, 45, 600, 400, 0xffffff, -1, -1, 0xc0c0c0, -1);
+            //c.setPlotArea(55, 45, 600, 400, 0xffffff, -1, -1, 0xc0c0c0, -1);
+            c.setPlotArea(55, 45, in_width, in_hight, 0xffffff, -1, -1, 0xc0c0c0, -1);
 
             // Add a legend box at (55, 25) (top of the chart) with horizontal layout. Use 8
             // pts Arial font. Set the background and border color to Transparent.

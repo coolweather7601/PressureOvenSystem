@@ -11,8 +11,7 @@ namespace nModBusWeb
     public partial class chart_multiaxes : System.Web.UI.Page
     {
         static private string conn = System.Configuration.ConfigurationManager.ConnectionStrings["OVEN"].ToString();
-        //query
-        static private string mahcineID, StartTime, EndTime;
+        static private int out_width = 1100, out_hight = 500, in_width = 900, in_hight = 350;
 
         //
         // Page Load event handler
@@ -21,11 +20,11 @@ namespace nModBusWeb
         {
             if (!IsPostBack)
             {
-                mahcineID = Request.QueryString["machineID"];
-                StartTime = Request.QueryString["StartTime"];
-                EndTime = Request.QueryString["EndTime"];
+                txtMachineID.Text = Request.QueryString["machineID"];
+                txtStart.Text = Request.QueryString["StartTime"];
+                txtEnd.Text = Request.QueryString["EndTime"];
 
-                if (string.IsNullOrEmpty(mahcineID))
+                if (string.IsNullOrEmpty(txtMachineID.Text))
                 {
                     #region  Sample
 
@@ -49,7 +48,8 @@ namespace nModBusWeb
                     // Create a XYChart object of size 600 x 360 pixels. Use a vertical gradient
                     // color from sky blue (aaccff) to white (ffffff) as background. Set border to
                     // grey (888888). Use rounded corners. Enable soft drop shadow.
-                    XYChart c = new XYChart(600, 360);
+                    //XYChart c = new XYChart(600, 360);
+                    XYChart c = new XYChart(out_width, out_hight);
                     c.setBackground(c.linearGradientColor(0, 0, 0, c.getHeight(), 0xaaccff, 0xffffff
                         ), 0x888888);
                     c.setRoundedFrame();
@@ -64,8 +64,8 @@ namespace nModBusWeb
                     // Set the plotarea at (100, 80) and of size 400 x 230 pixels, with white
                     // (ffffff) background. Use grey #(aaaaa) dotted lines for both horizontal and
                     // vertical grid lines.
-                    c.setPlotArea(100, 80, 400, 230, 0xffffff, -1, -1, c.dashLineColor(0xaaaaaa,
-                        Chart.DotLine), -1);
+                    //c.setPlotArea(100, 80, 400, 230, 0xffffff, -1, -1, c.dashLineColor(0xaaaaaa, Chart.DotLine), -1);
+                    c.setPlotArea(100, 80, in_width, in_hight, 0xffffff, -1, -1, c.dashLineColor(0xaaaaaa, Chart.DotLine), -1);
 
                     // Add a legend box with the bottom center anchored at (300, 80) (top center of
                     // the plot area). Use horizontal layout, and 8 points Arial Bold font. Set
@@ -149,16 +149,12 @@ namespace nModBusWeb
         public enum kind : int { Pressure = 1, ch1 = 2, ch2 = 3, ch3 = 4 }
         protected void btnQuery_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(mahcineID)) { mahcineID = txtMachineID.Text.Trim().ToUpper(); }
-            if (string.IsNullOrEmpty(StartTime)) { StartTime = txtStart.Text; }
-            if (string.IsNullOrEmpty(EndTime)) { EndTime = txtEnd.Text; }
-
             App_Code.AdoDbConn ado = new App_Code.AdoDbConn(App_Code.AdoDbConn.AdoDbType.Oracle, conn);
             string str = string.Format(@"Select     Time,Data,kindName,Measure 
                                             From       oven_assy_log L
                                             Inner join oven_assy_logkind LK on L.oven_assy_logkindid=Lk.oven_assy_logkindid
                                             Where      Machine_ID = '{0}'
-                                            And        Time >= to_date('{1}', 'YYYY/MM/DD') And Time <= to_date('{2}', 'YYYY/MM/DD')", mahcineID, StartTime, EndTime);
+                                            And        Time >= to_date('{1}', 'YYYY/MM/DD') And Time <= to_date('{2}', 'YYYY/MM/DD')", txtMachineID.Text.Trim().ToUpper(), txtStart.Text, txtEnd.Text);
 
             DataTable dt_Pressure = new DataTable();
             dt_Pressure = ado.loadDataTable(str + string.Format(@" And L.oven_assy_logkindid = '{0}'", (int)kind.Pressure), null, "oven_assy_log");
@@ -210,7 +206,7 @@ namespace nModBusWeb
             // Create a XYChart object of size 600 x 360 pixels. Use a vertical gradient
             // color from sky blue (aaccff) to white (ffffff) as background. Set border to
             // grey (888888). Use rounded corners. Enable soft drop shadow.
-            XYChart c = new XYChart(800, 600);
+            XYChart c = new XYChart(out_width, out_hight);
             c.setBackground(c.linearGradientColor(0, 0, 0, c.getHeight(), 0xaaccff, 0xffffff
                 ), 0x888888);
             c.setRoundedFrame();
@@ -225,7 +221,7 @@ namespace nModBusWeb
             // Set the plotarea at (100, 80) and of size 400 x 230 pixels, with white
             // (ffffff) background. Use grey #(aaaaa) dotted lines for both horizontal and
             // vertical grid lines.
-            c.setPlotArea(100, 80, 600, 400, 0xffffff, -1, -1, c.dashLineColor(0xaaaaaa,
+            c.setPlotArea(100, 80, in_width, in_hight, 0xffffff, -1, -1, c.dashLineColor(0xaaaaaa,
                 Chart.DotLine), -1);
 
             // Add a legend box with the bottom center anchored at (300, 80) (top center of
