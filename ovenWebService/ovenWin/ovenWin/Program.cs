@@ -53,7 +53,7 @@ namespace ovenWin
                     Machine_ID = args[1].ToString();
 
                     string[] arrPara = args[2].ToString().Split('|');
-                    bakeTime = Convert.ToInt32(arrPara[0].Split('-')[2]) * 60 * 1000;
+                    bakeTime = (Convert.ToInt32(arrPara[0].Split('-')[1]) * 60 + Convert.ToInt32(arrPara[0].Split('-')[2])) * 60 * 1000;
                     LimitTemp = Convert.ToInt32(arrPara[0].Split('-')[3]);
                     LimitPressure = Convert.ToInt32(arrPara[0].Split('-')[4]);
                     Console.WriteLine("bakeTime" + bakeTime + Environment.NewLine);
@@ -61,7 +61,7 @@ namespace ovenWin
                     Console.WriteLine("LimitPressure: " + LimitPressure + Environment.NewLine);
                     if (arrPara.Length > 1)
                     {
-                        bakeTime2 = Convert.ToInt32(arrPara[1].Split('-')[2]) * 60 * 1000;
+                        bakeTime2 = (Convert.ToInt32(arrPara[1].Split('-')[1]) * 60 + Convert.ToInt32(arrPara[1].Split('-')[2])) * 60 * 1000;
                         LimitTemp2 = Convert.ToInt32(arrPara[1].Split('-')[3]);
                         LimitPressure2 = Convert.ToInt32(arrPara[1].Split('-')[4]);
                         Console.WriteLine("bakeTime2" + bakeTime2 + Environment.NewLine);

@@ -56,7 +56,7 @@ namespace nModBusWeb
 
                     // Add a title box to the chart using 13 pts Times Bold Italic font. The text is
                     // white (0xffffff) on a purple (0x800080) background, with a 1 pixel 3D border.
-                    c.addTitle("Long Term Server Load", "Times New Roman Bold Italic", 13, 0xffffff
+                    c.addTitle("Long Term Server Load (Sample)", "Times New Roman Bold Italic", 13, 0xffffff
                         ).setBackground(0x800080, -1, 1);
 
                     // Add a title to the y axis

@@ -57,7 +57,7 @@ namespace nModBusWeb
 
                     // Add a title box to the chart using 15 pts Arial Bold Italic font. Set top
                     // margin to 16 pixels.
-                    ChartDirector.TextBox title = c.addTitle("Multiple Axes Demonstration",
+                    ChartDirector.TextBox title = c.addTitle("Multiple Axes Demonstration (Sample)",
                         "Arial Bold Italic", 15);
                     title.setMargin2(0, 0, 16, 0);
 
