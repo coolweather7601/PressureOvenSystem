@@ -22,9 +22,9 @@ namespace ovenWin
         //Timer
         static Timer timer;
         static string Machine_ID;
-        static private int TimeInterval = 1000 * 60, StartTime = 0;//new 
-        static private double ScanTime,bakeTime, LimitTemp, LimitPressure, bakeTime2, LimitTemp2, LimitPressure2;//new
-        static private bool reachTemp = false, reachPress = false, reachTemp2 = false, reachPress2 = false;//new 
+        static private int TimeInterval = 1000 * 60, StartTime = 0;
+        static private double ScanTime,bakeTime, LimitTemp, LimitPressure, bakeTime2, LimitTemp2, LimitPressure2;
+        static private bool reachTemp = false, reachPress = false, reachTemp2 = false, reachPress2 = false;
         
 
         static void Main(string[] args)
@@ -39,18 +39,19 @@ namespace ovenWin
                 serialPort.StopBits = StopBits.One;
                 serialPort.DataBits = 8;
 
-                //args = new string[] { "COM10", "OV-135", "1-0-2-110-7|2-0-2-126-7" }; //LOCAL TEST
+                //args = new string[] { "COM10", "OV-135" , "120" , "1-0-2-110-7|2-0-2-126-7" }; //LOCAL TEST
                 if (args != null && args.Length > 0)
                 {
                     //args[0] -> COM
                     //args[1] -> Machine_ID
-                    //args[2] -> PROCESS-1.2.3... (Process1-Hour1-Min1-Temp1-Pressure1|Process2-Hour2-Min2-Temp2-Pressure2)
+                    //args[2] -> BakeTime(minutes)
+                    //args[3] -> PROCESS-1.2.3... (Process1-Hour1-Min1-Temp1-Pressure1|Process2-Hour2-Min2-Temp2-Pressure2)
 
                     // set the appropriate properties.
                     serialPort.PortName = args[0].ToString();
                     Machine_ID = args[1].ToString();
 
-                    string[] arrPara = args[2].ToString().Split('|');
+                    string[] arrPara = args[3].ToString().Split('|');
                     bakeTime = (Convert.ToInt32(arrPara[0].Split('-')[1]) * 60 + Convert.ToInt32(arrPara[0].Split('-')[2])) * 60 * 1000;
                     LimitTemp = Convert.ToInt32(arrPara[0].Split('-')[3]);
                     LimitPressure = Convert.ToInt32(arrPara[0].Split('-')[4]);
@@ -66,11 +67,12 @@ namespace ovenWin
                         Console.WriteLine("LimitTemp2" + LimitTemp2 + Environment.NewLine);
                         Console.WriteLine("LimitPressure2: " + LimitPressure2 + Environment.NewLine);
                     }
-                    ScanTime = bakeTime + bakeTime2;
+                    //ScanTime = bakeTime + bakeTime2;
+                    ScanTime = Convert.ToDouble(args[2].ToString());
 
                     Console.WriteLine("COM: " + args[0].ToString() + Environment.NewLine);
                     Console.WriteLine("MachineID: " + args[1].ToString() + Environment.NewLine);
-                    Console.WriteLine("args[2]: " + args[2].ToString() + Environment.NewLine);
+                    Console.WriteLine("args[3]: " + args[3].ToString() + Environment.NewLine);
                     Console.WriteLine("ScanTime: " + ScanTime + Environment.NewLine);
 
                     serialPort.Open();
@@ -98,8 +100,8 @@ namespace ovenWin
                 }
             }
             catch (Exception ex) { Console.WriteLine("Exception: " + ex.ToString()); }
-        }//new
-        static void timer_Elapsed()//new 
+        }
+        static void timer_Elapsed()
         {
             Console.WriteLine(string.Format(@"{0}.",DateTime.Now.ToString()));
             StartTime += TimeInterval;
@@ -194,16 +196,48 @@ namespace ovenWin
                 }
                 #endregion
 
+                //only monitor the oven in the scanTime
+                //if (ScanTime < StartTime)
+                //{
+                //    //end bake log 
+                //    string endLogstr = string.Format(@"Insert into oven_assy_log(oven_assy_logid,machine_ID,oven_Assy_logKindID,Time)
+                //                                       Values(oven_assy_log_sequence.nextval,'{0}','0',SYSDATE)", Machine_ID);
+                //    ado.dbNonQuery(endLogstr, null);
+                //
+                //    Mode(machineMode.close);
+                //    timer.Stop();
+                //}
 
-                if (ScanTime < StartTime)
+                //error code check for machine monitor(Uniga offer),and check the status of the oven(fc.Terminate), if recive terminate signal stop timer
+                App_Code.ErrorCode ec = new App_Code.ErrorCode();
+                List<ushort[]> lst = new List<ushort[]>
                 {
-                    //end bake log 
-                    string endLogstr = string.Format(@"Insert into oven_assy_log(oven_assy_logid,machine_ID,oven_Assy_logKindID,Time)
-                                                       Values(oven_assy_log_sequence.nextval,'{0}','0',SYSDATE)", Machine_ID);
-                    ado.dbNonQuery(endLogstr, null);
+                    new ushort[]{ec.error616,616}, new ushort[]{ec.error617,617}, new ushort[]{ec.error618,618}, new ushort[]{ec.error619,619}, new ushort[]{ec.error620,620},
+                    new ushort[]{ec.error621,621}, new ushort[]{ec.error622,622}, new ushort[]{ec.error623,623}, new ushort[]{ec.error624,624}, new ushort[]{ec.error625,625},
+                    new ushort[]{ec.error626,626}, new ushort[]{ec.error627,627}, new ushort[]{ec.error628,628}, new ushort[]{ec.error629,629}, new ushort[]{ec.error630,630},
+                    new ushort[]{ec.error631,631}, new ushort[]{ec.error632,632}, new ushort[]{ec.error633,633}, new ushort[]{ec.error634,634}, new ushort[]{ec.error635,635},
+                    new ushort[]{ec.error636,636}, new ushort[]{ec.error638,638}, new ushort[]{ec.error639,639}, new ushort[]{ec.error640,640}, new ushort[]{ec.error641,641},
+                    new ushort[]{ec.error642,642}, new ushort[]{ec.error643,643}, new ushort[]{ec.error644,644}, new ushort[]{ec.error645,645}, new ushort[]{ec.error646,646},
+                    new ushort[]{ec.error647,647}, new ushort[]{ec.error648,648}, new ushort[]{ec.error649,649}, new ushort[]{ec.error650,650}, new ushort[]{ec.error651,651},
+                    new ushort[]{ec.error652,652}, new ushort[]{ec.error653,653}, new ushort[]{ec.error654,654}, new ushort[]{ec.error655,655}, new ushort[]{ec.error656,656},
+                    new ushort[]{ec.error657,657}, new ushort[]{ec.error658,658}, new ushort[]{ec.error659,659}, new ushort[]{ec.error660,660},
+                    new ushort[]{fc.Terminate,0}
+                };
 
-                    Mode(machineMode.close);
-                    timer.Stop();
+                foreach (ushort[] item in lst)
+                {                    
+                    startAddress = item[0];
+                    bool[] register_ErrorCode = master.ReadCoils(slaveID, startAddress, numOfPoints);
+                    if (register_ErrorCode[0] == true)
+                    {
+                        //end bake log 
+                        string endLogstr = string.Format(@"Insert into oven_assy_log(oven_assy_logid,machine_ID,oven_Assy_logKindID,Time)
+                                                           Values(oven_assy_log_sequence.nextval,'{0}','{1}',SYSDATE)", Machine_ID, item[1].ToString());
+                        ado.dbNonQuery(endLogstr, null);
+
+                        Mode(machineMode.close);
+                        timer.Stop();
+                    }
                 }
             }
             catch (Exception exception)

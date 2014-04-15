@@ -316,21 +316,22 @@ namespace nModBusWeb
                                                        mdt.Rows[0]["TypeName"].ToString().ToUpper(), mdt.Rows[0]["ED_12NC"].ToString(),mdt.Rows[0]["Diffusion"].ToString(),mdt.Rows[0]["package"].ToString(),
                                                        dt_BakeTime.Rows[0]["bakeTime"].ToString(),DateTime.Now,DateTime.Now.AddMinutes(Convert.ToDouble(dt_BakeTime.Rows[0]["bakeTime"].ToString())),txtUser.Text.Trim(),mdt.Rows[0]["Glue"].ToString().ToUpper()};
                                 string result = ado.dbNonQuery(insertStr, para).ToString();
-                                if (result.Equals("SUCCESS")) { ScriptManager.RegisterStartupScript(this, this.GetType(), "", string.Format(@"alert('Success, the oven is working.'); window.location.href='{0}';", System.Web.Configuration.WebConfigurationManager.AppSettings["msWebSite"].ToString()), true); }
+                                if (result.Equals("SUCCESS")) 
+                                {
+                                    //============================================================================
+                                    //Comport/ MachineID/ LimitTemperature/ LimitPressure/ TotalTime(minute)
+                                    //============================================================================
+                                    //Process_1, Hour_1, Min_1, Temperature_1, Pressure_1,
+                                    //Process_2, Hour_2, Min_2, Temperature_2, Pressure_2
+                                    callWebService(string.Format(@"{0} {1} {2} {3}|{4}", dt.Rows[0]["Comport"].ToString(),
+                                                                                 txtMachineID.Text.Trim().ToUpper(),
+                                                                                 dt_BakeTime.Rows[0]["bakeTime"].ToString(),
+                                                                                 string.Format(@"{0}-{1}-{2}-{3}-{4}", dr_bakeTime["Process_1"].ToString(), dr_bakeTime["Hour_1"].ToString(), dr_bakeTime["Min_1"].ToString(), dr_bakeTime["Temperature_1"].ToString(), dr_bakeTime["Pressure_1"].ToString()),
+                                                                                 string.Format(@"{0}-{1}-{2}-{3}-{4}", dr_bakeTime["Process_2"].ToString(), dr_bakeTime["Hour_2"].ToString(), dr_bakeTime["Min_2"].ToString(), dr_bakeTime["Temperature_2"].ToString(), dr_bakeTime["Pressure_2"].ToString())
+                                                                                 ));
 
-
-                                //============================================================================
-                                //Comport/ MachineID/ LimitTemperature/ LimitPressure/ TotalTime(minute)
-                                //============================================================================
-                                //Process_1, Hour_1, Min_1, Temperature_1, Pressure_1,
-                                //Process_2, Hour_2, Min_2, Temperature_2, Pressure_2
-                                callWebService(string.Format(@"{0} {1} {2}|{3}", dt.Rows[0]["Comport"].ToString(),
-                                                                             txtMachineID.Text.Trim().ToUpper(),
-                                                                             string.Format(@"{0}-{1}-{2}-{3}-{4}", dr_bakeTime["Process_1"].ToString(), dr_bakeTime["Hour_1"].ToString(), dr_bakeTime["Min_1"].ToString(), dr_bakeTime["Temperature_1"].ToString(), dr_bakeTime["Pressure_1"].ToString()),
-                                                                             string.Format(@"{0}-{1}-{2}-{3}-{4}", dr_bakeTime["Process_2"].ToString(), dr_bakeTime["Hour_2"].ToString(), dr_bakeTime["Min_2"].ToString(), dr_bakeTime["Temperature_2"].ToString(), dr_bakeTime["Pressure_2"].ToString())
-                                                                             ));
-
-
+                                    ScriptManager.RegisterStartupScript(this, this.GetType(), "", string.Format(@"alert('Success, the oven is working.'); window.location.href='{0}';", System.Web.Configuration.WebConfigurationManager.AppSettings["msWebSite"].ToString()), true); 
+                                }
 
                             }
                             #endregion
