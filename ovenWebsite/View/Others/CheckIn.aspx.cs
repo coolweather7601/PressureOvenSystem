@@ -252,7 +252,7 @@ namespace nModBusWeb
                             object[] p = new object[] { txtMachineID.Text.Trim().ToUpper() };
                             DataTable dt = ado.loadDataTable(str, p, "Oven_Assy_Location");
                             if (dt.Rows.Count < 1) { ScriptManager.RegisterStartupScript(this, this.GetType(), "", string.Format(@"alert('can not find this oven 【{0}】');", txtMachineID.Text.Trim().ToUpper()), true); }
-                            
+
                             //===============================================================================
                             //取出 oven_assy_fe_baketime parameters
                             //===============================================================================
@@ -264,18 +264,16 @@ namespace nModBusWeb
                                                              And Bake_Program like '%{2}%'", pk_Area.ToUpper(), pk_Adhesive.ToUpper(), pk_BakeProgram.ToUpper());
                             DataTable dt_BakeTime = ado.loadDataTable(str_BakeTime, null, "Oven_Assy_Fe_BakeTime");
                             if (dt_BakeTime.Rows.Count < 1) { ScriptManager.RegisterStartupScript(this, this.GetType(), "", string.Format(@"alert('can not read this PTN 【{0}】parameters');", txtPTN.Text.Trim().ToUpper()), true); }
-
-                            //===============================================================================
-                            //取出Parameters from oven 
-                            //===============================================================================
-                            DataTable dt_ovenParameters = getOvenParameters(dt.Rows[0]["Comport"].ToString());
-                            if (dt_ovenParameters.Rows.Count < 1) { ScriptManager.RegisterStartupScript(this, this.GetType(), "", string.Format(@"alert('can not read this oven 【{0}】parameters, Comport:{1}');", txtMachineID.Text.Trim().ToUpper(), dt.Rows[0]["Comport"].ToString()), true); }
-
+                                                        
                             //===============================================================================
                             //比對PTN, 如果比對正確, ON機台 & Log(Temperature & Pressure)                
                             //===============================================================================
-                            #region check
-
+                            #region compare PTN between oven and database
+                                                        
+                            //取出Parameters from oven                             
+                            DataTable dt_ovenParameters = getOvenParameters(dt.Rows[0]["Comport"].ToString());
+                            if (dt_ovenParameters.Rows.Count < 1) { ScriptManager.RegisterStartupScript(this, this.GetType(), "", string.Format(@"alert('can not read this oven 【{0}】parameters, Comport:{1}');", txtMachineID.Text.Trim().ToUpper(), dt.Rows[0]["Comport"].ToString()), true); }
+                            
                             DataRow dr_bakeTime = dt_BakeTime.Rows[0];
                             DataRow dr_ovenParameters = dt_ovenParameters.Rows[0];
                             string[] arrField = new string[]{"Process_1", "Hour_1", "Min_1", "Temperature_1","Pressure_1",
@@ -316,7 +314,7 @@ namespace nModBusWeb
                                                        mdt.Rows[0]["TypeName"].ToString().ToUpper(), mdt.Rows[0]["ED_12NC"].ToString(),mdt.Rows[0]["Diffusion"].ToString(),mdt.Rows[0]["package"].ToString(),
                                                        dt_BakeTime.Rows[0]["bakeTime"].ToString(),DateTime.Now,DateTime.Now.AddMinutes(Convert.ToDouble(dt_BakeTime.Rows[0]["bakeTime"].ToString())),txtUser.Text.Trim(),mdt.Rows[0]["Glue"].ToString().ToUpper()};
                                 string result = ado.dbNonQuery(insertStr, para).ToString();
-                                if (result.Equals("SUCCESS")) 
+                                if (result.Equals("SUCCESS"))
                                 {
                                     //============================================================================
                                     //Comport/ MachineID/ LimitTemperature/ LimitPressure/ TotalTime(minute)
@@ -330,11 +328,12 @@ namespace nModBusWeb
                                                                                  string.Format(@"{0}-{1}-{2}-{3}-{4}", dr_bakeTime["Process_2"].ToString(), dr_bakeTime["Hour_2"].ToString(), dr_bakeTime["Min_2"].ToString(), dr_bakeTime["Temperature_2"].ToString(), dr_bakeTime["Pressure_2"].ToString())
                                                                                  ));
 
-                                    ScriptManager.RegisterStartupScript(this, this.GetType(), "", string.Format(@"alert('Success, the oven is working.'); window.location.href='{0}';", System.Web.Configuration.WebConfigurationManager.AppSettings["msWebSite"].ToString()), true); 
+                                    ScriptManager.RegisterStartupScript(this, this.GetType(), "", string.Format(@"alert('Success, the oven is working.'); window.location.href='{0}';", System.Web.Configuration.WebConfigurationManager.AppSettings["msWebSite"].ToString()), true);
                                 }
 
                             }
                             #endregion
+
                         }
                         catch (Exception ex)
                         {

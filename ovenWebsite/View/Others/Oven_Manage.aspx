@@ -29,7 +29,7 @@
             OnRowDataBound="GridViewOV_RowDataBound"  
             OnPageIndexChanging="GridViewOV_PageIndexChanging" BackColor="White" 
             BorderColor="#999999" BorderStyle="Solid" BorderWidth="1px" 
-            OnRowCommand="GridViewOV_RowCommand" Width="80%">
+            OnRowCommand="GridViewOV_RowCommand" Width="50%">
             <Columns>                
                 <asp:TemplateField HeaderText="No.">
                         <ItemTemplate>

@@ -48,11 +48,11 @@
                     <ItemTemplate>
                         <asp:Label ID="Label1" runat="server" Text='<%# Bind("Area") %>'></asp:Label>
                     </ItemTemplate>
-                    <HeaderStyle Width="20%" />
+                    <HeaderStyle Width="25%" />
                 </asp:TemplateField>
                 <asp:TemplateField HeaderText="Adhesive" SortExpression="Adhesive">
                     <%--<EditItemTemplate>
-                        <asp:TextBox id="gv_txtAdhesive" Text='<%# Bind("Adhesive") %>' runat="server"></asp:TextBox>
+                        <asp:TextBox id="gv_txtAhesive" Text='<%# Bind("Adhesive") %>' runat="server"></asp:TextBox>
                     </EditItemTemplate>--%>
                     <ItemTemplate>
                         <asp:Label ID="Label2" runat="server" Text='<%# Bind("Adhesive") %>'></asp:Label>
@@ -60,7 +60,7 @@
                     <HeaderStyle Width="25%" />
                 </asp:TemplateField>
                 
-                <asp:TemplateField HeaderText="Bake_Program" SortExpression="Bake_Program">
+                <asp:TemplateField HeaderText="PTN" SortExpression="Bake_Program">
                     <%--<EditItemTemplate>
                         <asp:TextBox id="gv_txtBakeProgram" Text='<%# Bind("Bake_Program") %>' runat="server"></asp:TextBox>
                     </EditItemTemplate>--%>
@@ -69,7 +69,7 @@
                     </ItemTemplate>
                     <HeaderStyle Width="20%" />
                 </asp:TemplateField>
-                <asp:TemplateField HeaderText="Process_1" SortExpression="Process_1">
+                <asp:TemplateField HeaderText="Process(1)" SortExpression="Process_1">
                     <EditItemTemplate>
                         <asp:TextBox id="gv_txtProcess_1" Text='<%# Bind("Process_1") %>' runat="server"></asp:TextBox>
                     </EditItemTemplate>
@@ -78,7 +78,7 @@
                     </ItemTemplate>
                     <HeaderStyle Width="10%" />
                 </asp:TemplateField>
-                <asp:TemplateField HeaderText="Hour_1" SortExpression="Hour_1">
+                <asp:TemplateField HeaderText="Hour(1)" SortExpression="Hour_1">
                     <EditItemTemplate>
                         <asp:TextBox id="gv_txtHour_1" Text='<%# Bind("Hour_1") %>' runat="server"></asp:TextBox>
                     </EditItemTemplate>
@@ -87,7 +87,7 @@
                     </ItemTemplate>
                     <HeaderStyle Width="10%" />
                 </asp:TemplateField>
-                <asp:TemplateField HeaderText="Min_1" SortExpression="Min_1">
+                <asp:TemplateField HeaderText="Min(1)" SortExpression="Min_1">
                     <EditItemTemplate>
                         <asp:TextBox id="gv_txtMin_1" Text='<%# Bind("Min_1") %>' runat="server"></asp:TextBox>
                     </EditItemTemplate>
@@ -96,7 +96,7 @@
                     </ItemTemplate>
                     <HeaderStyle Width="10%" />
                 </asp:TemplateField>
-                <asp:TemplateField HeaderText="Temperature_1" SortExpression="Temperature_1">
+                <asp:TemplateField HeaderText="Temperature(1)" SortExpression="Temperature_1">
                     <EditItemTemplate>
                         <asp:TextBox id="gv_txtTemperature_1" Text='<%# Bind("Temperature_1") %>' runat="server"></asp:TextBox>
                     </EditItemTemplate>
@@ -105,7 +105,7 @@
                     </ItemTemplate>
                     <HeaderStyle Width="10%" />
                 </asp:TemplateField>
-                <asp:TemplateField HeaderText="Pressure_1" SortExpression="Pressure_1">
+                <asp:TemplateField HeaderText="Pressure(1)" SortExpression="Pressure_1">
                     <EditItemTemplate>
                         <asp:TextBox id="gv_txtPressure_1" Text='<%# Bind("Pressure_1") %>' runat="server"></asp:TextBox>
                     </EditItemTemplate>
@@ -115,7 +115,7 @@
                     <HeaderStyle Width="10%" />
                 </asp:TemplateField>
                 
-                <asp:TemplateField HeaderText="Process_2" SortExpression="Process_2">
+                <asp:TemplateField HeaderText="Process(2)" SortExpression="Process_2">
                     <EditItemTemplate>
                         <asp:TextBox id="gv_txtProcess_2" Text='<%# Bind("Process_2") %>' runat="server"></asp:TextBox>
                     </EditItemTemplate>
@@ -124,7 +124,7 @@
                     </ItemTemplate>
                     <HeaderStyle Width="10%" />
                 </asp:TemplateField>
-                <asp:TemplateField HeaderText="Hour_2" SortExpression="Hour_2">
+                <asp:TemplateField HeaderText="Hour(2)" SortExpression="Hour_2">
                     <EditItemTemplate>
                         <asp:TextBox id="gv_txtHour_2" Text='<%# Bind("Hour_2") %>' runat="server"></asp:TextBox>
                     </EditItemTemplate>
@@ -133,7 +133,7 @@
                     </ItemTemplate>
                     <HeaderStyle Width="10%" />
                 </asp:TemplateField>
-                <asp:TemplateField HeaderText="Min_2" SortExpression="Min_2">
+                <asp:TemplateField HeaderText="Min(2)" SortExpression="Min_2">
                     <EditItemTemplate>
                         <asp:TextBox id="gv_txtMin_2" Text='<%# Bind("Min_2") %>' runat="server"></asp:TextBox>
                     </EditItemTemplate>
@@ -142,7 +142,7 @@
                     </ItemTemplate>
                     <HeaderStyle Width="10%" />
                 </asp:TemplateField>
-                <asp:TemplateField HeaderText="Temperature_2" SortExpression="Temperature_2">
+                <asp:TemplateField HeaderText="Temperature(2)" SortExpression="Temperature_2">
                     <EditItemTemplate>
                         <asp:TextBox id="gv_txtTemperature_2" Text='<%# Bind("Temperature_2") %>' runat="server"></asp:TextBox>
                     </EditItemTemplate>
@@ -151,7 +151,7 @@
                     </ItemTemplate>
                     <HeaderStyle Width="10%" />
                 </asp:TemplateField>
-                <asp:TemplateField HeaderText="Pressure_2" SortExpression="Pressure_2">
+                <asp:TemplateField HeaderText="Pressure(2)" SortExpression="Pressure_2">
                     <EditItemTemplate>
                         <asp:TextBox id="gv_txtPressure_2" Text='<%# Bind("Pressure_2") %>' runat="server"></asp:TextBox>
                     </EditItemTemplate>
