@@ -20,7 +20,9 @@
                 <td>Kind:</td>
                 <td></td> 
                 <td>Machine ID:</td>
-                <td><asp:TextBox ID="txtMachineID" runat="server"></asp:TextBox></td>                
+                <td><asp:TextBox ID="txtMachineID" runat="server"></asp:TextBox></td>  
+                <td>Batch No.:</td>
+                <td><asp:TextBox ID="txtBatch" runat="server"></asp:TextBox></td>               
                 <td>Start Time:</td>
                 <td>
                     <asp:TextBox ID="txtStart" runat="server"></asp:TextBox>

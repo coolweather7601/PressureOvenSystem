@@ -19,9 +19,10 @@ namespace nModBusWeb
         {
             if (!IsPostBack)
             {
-                txtMachineID.Text = Request.QueryString["machineID"];
-                txtStart.Text = Request.QueryString["StartTime"];
-                txtEnd.Text = Request.QueryString["EndTime"];
+                txtMachineID.Text = Request.QueryString["Machine_ID"];
+                txtBatch.Text = Request.QueryString["Batch_NO"];
+                txtStart.Text = Request.QueryString["In_Time"];
+                txtEnd.Text = Request.QueryString["Out_time"];
                 
                 if (string.IsNullOrEmpty(txtMachineID.Text))
                 {

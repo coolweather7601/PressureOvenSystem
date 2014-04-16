@@ -12,6 +12,7 @@ namespace nModBusWeb
     {
         static private string conn = System.Configuration.ConfigurationManager.ConnectionStrings["OVEN"].ToString();
         static private int out_width = 1100, out_hight = 500, in_width = 900, in_hight = 350;
+        //a. Machine_ID b. Batch_NO c. In_Time d. Out_Time
 
         //
         // Page Load event handler
@@ -20,9 +21,10 @@ namespace nModBusWeb
         {
             if (!IsPostBack)
             {
-                txtMachineID.Text = Request.QueryString["machineID"];
-                txtStart.Text = Request.QueryString["StartTime"];
-                txtEnd.Text = Request.QueryString["EndTime"];
+                txtMachineID.Text = Request.QueryString["Machine_ID"];
+                txtBatch.Text = Request.QueryString["Batch_NO"];
+                txtStart.Text = Request.QueryString["In_Time"];
+                txtEnd.Text = Request.QueryString["Out_Time"];
 
                 if (string.IsNullOrEmpty(txtMachineID.Text))
                 {

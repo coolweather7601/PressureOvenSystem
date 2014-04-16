@@ -23,6 +23,7 @@ namespace ovenWin
         static Timer timer;
         static string Machine_ID;
         static private int TimeInterval = 1000 * 60, StartTime = 0;
+        static private string Batch_NO;
         static private double ScanTime,bakeTime, LimitTemp, LimitPressure, bakeTime2, LimitTemp2, LimitPressure2;
         static private bool reachTemp = false, reachPress = false, reachTemp2 = false, reachPress2 = false;
         
@@ -39,17 +40,19 @@ namespace ovenWin
                 serialPort.StopBits = StopBits.One;
                 serialPort.DataBits = 8;
 
-                //args = new string[] { "COM10", "OV-135" , "120" , "1-0-2-110-7|2-0-2-126-7" }; //LOCAL TEST
+                //args = new string[] { "COM10", "OV-135" , "120" , "1-0-2-110-7|2-0-2-126-7", "941E43C108"}; //LOCAL TEST
                 if (args != null && args.Length > 0)
                 {
                     //args[0] -> COM
                     //args[1] -> Machine_ID
                     //args[2] -> BakeTime(minutes)
                     //args[3] -> PROCESS-1.2.3... (Process1-Hour1-Min1-Temp1-Pressure1|Process2-Hour2-Min2-Temp2-Pressure2)
+                    //args[4] -> Batch_NO
 
                     // set the appropriate properties.
                     serialPort.PortName = args[0].ToString();
                     Machine_ID = args[1].ToString();
+                    Batch_NO = args[4].ToString().ToUpper();
 
                     string[] arrPara = args[3].ToString().Split('|');
                     bakeTime = (Convert.ToInt32(arrPara[0].Split('-')[1]) * 60 + Convert.ToInt32(arrPara[0].Split('-')[2])) * 60 * 1000;
@@ -74,6 +77,7 @@ namespace ovenWin
                     Console.WriteLine("MachineID: " + args[1].ToString() + Environment.NewLine);
                     Console.WriteLine("args[3]: " + args[3].ToString() + Environment.NewLine);
                     Console.WriteLine("ScanTime: " + ScanTime + Environment.NewLine);
+                    Console.WriteLine("Batch_NO: " + Batch_NO + Environment.NewLine);
 
                     serialPort.Open();
                     // create Modbus RTU Master by the comport client
@@ -124,32 +128,32 @@ namespace ovenWin
                 startAddress = fc.Pressure;
                 ushort[] register_Pressure = master.ReadHoldingRegisters(slaveID, startAddress, numOfPoints);
                 Console.WriteLine(string.Format(@"Pressure {1}十進位：{0}{1}十六進位：{2} {1}", register_Pressure[0].ToString(), Environment.NewLine, Convert.ToString(Convert.ToInt32(register_Pressure[0].ToString()), 16)));
-                transaction_str1 = string.Format(@"insert into oven_assy_log(oven_assy_logid,machine_ID,oven_Assy_logKindID,Time,Data)
-                                                   values(oven_assy_log_sequence.nextval,'{0}','1',SYSDATE,'{1}')", Machine_ID, register_Pressure[0].ToString());
+                transaction_str1 = string.Format(@"insert into oven_assy_log(oven_assy_logid,machine_ID,oven_Assy_logKindID,Time,Data,Batch_NO)
+                                                   values(oven_assy_log_sequence.nextval,'{0}','1',SYSDATE,'{1}','{2}')", Machine_ID, register_Pressure[0].ToString(), Batch_NO);
                 arrStr.Add(transaction_str1);
 
                 //CH1
                 startAddress = fc.CH1;
                 ushort[] register_Ch1 = master.ReadHoldingRegisters(slaveID, startAddress, numOfPoints);
                 Console.WriteLine(string.Format(@"Temperature CH1 {1}十進位：{0}{1}十六進位：{2} {1}", register_Ch1[0].ToString(), Environment.NewLine, Convert.ToString(Convert.ToInt32(register_Ch1[0].ToString()), 16)));
-                transaction_str2 = string.Format(@"insert into oven_assy_log(oven_assy_logid,machine_ID,oven_Assy_logKindID,Time,Data)
-                                                   values(oven_assy_log_sequence.nextval,'{0}','2',SYSDATE,'{1}')", Machine_ID, register_Ch1[0].ToString());
+                transaction_str2 = string.Format(@"insert into oven_assy_log(oven_assy_logid,machine_ID,oven_Assy_logKindID,Time,Data,Batch_NO)
+                                                   values(oven_assy_log_sequence.nextval,'{0}','2',SYSDATE,'{1}','{2}')", Machine_ID, register_Ch1[0].ToString(),Batch_NO);
                 arrStr.Add(transaction_str2);
 
                 //CH2 
                 startAddress = fc.CH2;
                 ushort[] register_Ch2 = master.ReadHoldingRegisters(slaveID, startAddress, numOfPoints);
                 Console.WriteLine(string.Format(@"Temperature CH2 {1}十進位：{0}{1}十六進位：{2} {1}", register_Ch2[0].ToString(), Environment.NewLine, Convert.ToString(Convert.ToInt32(register_Ch2[0].ToString()), 16)));
-                transaction_str3 = string.Format(@"insert into oven_assy_log(oven_assy_logid,machine_ID,oven_Assy_logKindID,Time,Data)
-                                                   values(oven_assy_log_sequence.nextval,'{0}','3',SYSDATE,'{1}')", Machine_ID, register_Ch2[0].ToString());
+                transaction_str3 = string.Format(@"insert into oven_assy_log(oven_assy_logid,machine_ID,oven_Assy_logKindID,Time,Data,Batch_NO)
+                                                   values(oven_assy_log_sequence.nextval,'{0}','3',SYSDATE,'{1}','{2}')", Machine_ID, register_Ch2[0].ToString(),Batch_NO);
                 arrStr.Add(transaction_str3);
 
                 //最可靠溫度Ch3
                 startAddress = fc.Temperature;
                 ushort[] register_Temp = master.ReadHoldingRegisters(slaveID, startAddress, numOfPoints);
                 Console.WriteLine(string.Format(@"Temperature CH3 {1}十進位：{0}{1}十六進位：{2}{1}", register_Temp[0].ToString(), Environment.NewLine, Convert.ToString(Convert.ToInt32(register_Temp[0].ToString()), 16)));
-                transaction_str4 = string.Format(@"insert into oven_assy_log(oven_assy_logid,machine_ID,oven_Assy_logKindID,Time,Data)
-                                                   values(oven_assy_log_sequence.nextval,'{0}','4',SYSDATE,'{1}')", Machine_ID, register_Temp[0].ToString());
+                transaction_str4 = string.Format(@"insert into oven_assy_log(oven_assy_logid,machine_ID,oven_Assy_logKindID,Time,Data,Batch_NO)
+                                                   values(oven_assy_log_sequence.nextval,'{0}','4',SYSDATE,'{1}','{2}')", Machine_ID, register_Temp[0].ToString(),Batch_NO);
                 arrStr.Add(transaction_str4);
 
                 string reStr = ado.SQL_transaction(arrStr, Conn);
@@ -231,8 +235,8 @@ namespace ovenWin
                     if (register_ErrorCode[0] == true)
                     {
                         //end bake log 
-                        string endLogstr = string.Format(@"Insert into oven_assy_log(oven_assy_logid,machine_ID,oven_Assy_logKindID,Time)
-                                                           Values(oven_assy_log_sequence.nextval,'{0}','{1}',SYSDATE)", Machine_ID, item[1].ToString());
+                        string endLogstr = string.Format(@"Insert into oven_assy_log(oven_assy_logid,machine_ID,oven_Assy_logKindID,Time,Batch_NO)
+                                                           Values(oven_assy_log_sequence.nextval,'{0}','{1}',SYSDATE,'{2}')", Machine_ID, item[1].ToString(), Batch_NO);
                         ado.dbNonQuery(endLogstr, null);
 
                         Mode(machineMode.close);
