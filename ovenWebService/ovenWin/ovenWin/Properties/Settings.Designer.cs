@@ -42,5 +42,15 @@ namespace ovenWin.Properties {
                 return ((string)(this["MAIL"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
+        [global::System.Configuration.DefaultSettingValueAttribute("User Id=oven_sys;Password=oven!!;Data Source=AUTO")]
+        public string Oven_Trial {
+            get {
+                return ((string)(this["Oven_Trial"]));
+            }
+        }
     }
 }

@@ -19,14 +19,12 @@ namespace ovenWin
         static byte slaveID = 1;
         static ushort startAddress;
         static ushort numOfPoints = 8;
-        //Timer
-        static Timer timer;
+        //Timer        
         static string Machine_ID;
         static private int TimeInterval = 1000 * 60, StartTime = 0;
         static private string Batch_NO;
         static private double ScanTime,bakeTime, LimitTemp, LimitPressure, bakeTime2, LimitTemp2, LimitPressure2;
         static private bool reachTemp = false, reachPress = false, reachTemp2 = false, reachPress2 = false;
-        
 
         static void Main(string[] args)
         {
@@ -40,7 +38,7 @@ namespace ovenWin
                 serialPort.StopBits = StopBits.One;
                 serialPort.DataBits = 8;
 
-                //args = new string[] { "COM10", "OV-135" , "120" , "1-0-2-110-7|2-0-2-126-7", "941E43C108"}; //LOCAL TEST
+                //args = new string[] { "COM11", "OV0204-1" , "120" , "1-0-2-110-7|2-0-2-126-7", "941E43C108"}; //LOCAL TEST
                 if (args != null && args.Length > 0)
                 {
                     //args[0] -> COM
@@ -85,29 +83,31 @@ namespace ovenWin
                     master = ModbusSerialMaster.CreateRtu(serialPort);
                     master.Transport.ReadTimeout = 300;
 
-                    timer = new Timer();
-                    timer.Interval = TimeInterval; //set interval of checking here
-                    timer.Elapsed += delegate
+                    //test
+                    System.Timers.Timer tmrx = new System.Timers.Timer();
+                    tmrx.Interval = TimeInterval; //set interval of checking here
+                    tmrx.Elapsed += delegate
                     {
-                        //timer_Elapsed(); //old 
-                        timer_Elapsed();//new 
+                        tmr_func(tmrx);
                     };
-
                     Mode(machineMode.open);// active oven power
-                    timer.Start();
+                    tmrx.Start();
                     Console.ReadKey(true);
                 }
                 else
                 {
                     Console.WriteLine(string.Format(@"No args[]. {0}.", DateTime.Now.ToString()));
                     Console.ReadKey(true);
+                    Environment.Exit(0);        
                 }
             }
             catch (Exception ex) { Console.WriteLine("Exception: " + ex.ToString()); }
         }
-        static void timer_Elapsed()
+
+        private static void tmr_func(System.Timers.Timer _tmr)
         {
             Console.WriteLine(string.Format(@"{0}.",DateTime.Now.ToString()));
+            
             StartTime += TimeInterval;
 
             try
@@ -117,7 +117,8 @@ namespace ovenWin
                 //ushort numOfPoints = 8;
                 //master.Transport.ReadTimeout = 300;
 
-                string Conn = ovenWin.Properties.Settings.Default.Oven;
+                //string Conn = ovenWin.Properties.Settings.Default.Oven;
+                string Conn = ovenWin.Properties.Settings.Default.Oven_Trial;
                 App_Code.AdoDbConn ado = new App_Code.AdoDbConn(App_Code.AdoDbConn.AdoDbType.Oracle, Conn);
                 App_Code.FunctionCode fc = new App_Code.FunctionCode();
 
@@ -162,12 +163,14 @@ namespace ovenWin
                     Console.WriteLine(string.Format(@"{0} data insert sussess.", DateTime.Now.ToString()));
                 }
                 else
-                    Console.WriteLine(string.Format(@"{0} data insert error.", DateTime.Now.ToString()));
+                    Console.WriteLine
+                        (string.Format(@"{0} data insert error.", DateTime.Now.ToString()));
 
-                #region warring letter
                 //==============================================================
-                //Process1
+                //over spec, warring letter
                 //==============================================================
+                #region Process1
+                
                 if (bakeTime > StartTime)
                 {
                     if (Convert.ToDouble(register_Temp[0].ToString()) >= LimitTemp) { reachTemp = true; }
@@ -181,10 +184,9 @@ namespace ovenWin
                     if (Convert.ToDouble(register_Pressure[0].ToString()) > (LimitPressure + 0.5)) { mail("Alan.Kuo@nxp.com", string.Format(@"The Pressure of oven exceeds the spec")); }
                     if (reachPress == true && Convert.ToDouble(register_Pressure[0].ToString()) < (LimitPressure - 0.5)) { mail("Alan@Kuo@nxp.com", string.Format(@"The Pressure of oven not reach the spec")); }
                 }
+                #endregion
+                #region Process2
 
-                //==============================================================
-                //Process2
-                //==============================================================
                 if (bakeTime2 > StartTime && bakeTime < StartTime)
                 {
                     if (Convert.ToDouble(register_Temp[0].ToString()) >= LimitTemp2) { reachTemp2 = true; }
@@ -200,19 +202,11 @@ namespace ovenWin
                 }
                 #endregion
 
-                //only monitor the oven in the scanTime
-                //if (ScanTime < StartTime)
-                //{
-                //    //end bake log 
-                //    string endLogstr = string.Format(@"Insert into oven_assy_log(oven_assy_logid,machine_ID,oven_Assy_logKindID,Time)
-                //                                       Values(oven_assy_log_sequence.nextval,'{0}','0',SYSDATE)", Machine_ID);
-                //    ado.dbNonQuery(endLogstr, null);
-                //
-                //    Mode(machineMode.close);
-                //    timer.Stop();
-                //}
-
-                //error code check for machine monitor(Uniga offer),and check the status of the oven(fc.Terminate), if recive terminate signal stop timer
+                //==============================================================
+                //error code check for machine monitor(Uniga offer),
+                //and check the status of the oven(fc.Terminate),
+                //if recive terminate signal stop timer
+                //==============================================================
                 App_Code.ErrorCode ec = new App_Code.ErrorCode();
                 List<ushort[]> lst = new List<ushort[]>
                 {
@@ -228,27 +222,43 @@ namespace ovenWin
                     new ushort[]{fc.Terminate,0}
                 };
 
+                List<string> stopStr = new List<string>();
+                string transaction_error = "", transaction_stop = "";
+                bool timerStop = false;
                 foreach (ushort[] item in lst)
                 {                    
                     startAddress = item[0];
                     bool[] register_ErrorCode = master.ReadCoils(slaveID, startAddress, numOfPoints);
                     if (register_ErrorCode[0] == true)
                     {
-                        //end bake log 
-                        string endLogstr = string.Format(@"Insert into oven_assy_log(oven_assy_logid,machine_ID,oven_Assy_logKindID,Time,Batch_NO)
-                                                           Values(oven_assy_log_sequence.nextval,'{0}','{1}',SYSDATE,'{2}')", Machine_ID, item[1].ToString(), Batch_NO);
-                        ado.dbNonQuery(endLogstr, null);
-
-                        Mode(machineMode.close);
-                        timer.Stop();
+                        timerStop = true;                        
+                        transaction_error = string.Format(@"insert into oven_assy_log(oven_assy_logid,machine_ID,oven_Assy_logKindID,Time,Batch_NO)
+                                                   values(oven_assy_log_sequence.nextval,'{0}','{1}',SYSDATE,'{2}')", Machine_ID, item[1].ToString(), Batch_NO);
+                        stopStr.Add(transaction_error);
+                        transaction_stop = string.Format(@"insert into oven_assy_log(oven_assy_logid,machine_ID,oven_Assy_logKindID,Time,Batch_NO)
+                                                   values(oven_assy_log_sequence.nextval,'{0}','999',SYSDATE,'{1}')", Machine_ID, Batch_NO);
+                        stopStr.Add(transaction_stop);
+                        string stopResult = ado.SQL_transaction(stopStr, Conn);
+                        if (stopResult.ToUpper().Contains("SUCCESS"))
+                        {
+                            Console.WriteLine(string.Format(@"{0} Monitor stop process sussess.", DateTime.Now.ToString()));
+                        }
+                        else
+                            Console.WriteLine(string.Format(@"{0} Monitor stop process error.", DateTime.Now.ToString()));
+                        break;
                     }
                 }
+                if (timerStop)
+                {
+                    _tmr.Stop();
+                    Console.WriteLine("error: timer stop.");
+                    //Mode(machineMode.close);
+                }
+                
             }
             catch (Exception exception)
             {
                 #region error code
-
-                Mode(machineMode.close);
 
                 //Connection exception
                 //No response from server.
@@ -327,10 +337,11 @@ namespace ovenWin
                         startAddress = fc.OnBtnTwinkle;
                         master.WriteSingleRegister(slaveID, (ushort)startAddress, (ushort)Convert.ToInt32("1"));//write
                         ushort[] register_read = master.ReadHoldingRegisters(slaveID, (ushort)startAddress, numOfPoints);//read
-                        Console.WriteLine(string.Format(@"十進位：{0}{1}十六進位：{2}", register_read[0].ToString(), Environment.NewLine, Convert.ToString(Convert.ToInt32(register_read[0].ToString()), 16)));
+                        Console.WriteLine(string.Format(@"Start Monitor 十進位：{0}{1}十六進位：{2}", register_read[0].ToString(), Environment.NewLine, Convert.ToString(Convert.ToInt32(register_read[0].ToString()), 16)));
                         break;
                     case "close":
                         serialPort.Close();
+                        Environment.Exit(0); 
                         break;
                 }
             }

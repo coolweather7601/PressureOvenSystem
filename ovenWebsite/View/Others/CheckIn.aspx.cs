@@ -34,9 +34,10 @@ namespace nModBusWeb
                  
                 txtUser.Text = Request.QueryString["USER"];
                 txtMachineID.Text = Request.QueryString["Machine_ID"];
+                txtMachineID_TextChanged(null, null);
 
-                //callConsole("COM10 OV-135 1 9 1");
-                //callWebService("COM10 OV-135 1-0-2-110-7|2-0-2-126-7");
+                //callConsole("COM11 OV-135 1 9 1");
+                //callWebService("COM11 OV-135 1-0-2-110-7|2-0-2-126-7");
                 //intoLog("6420DCC108");                
             }
         }
