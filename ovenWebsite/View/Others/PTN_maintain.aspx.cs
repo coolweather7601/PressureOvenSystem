@@ -36,18 +36,32 @@ namespace nModBusWeb
             DataTable dt = new DataTable();
             string str = string.Format(@"Select Area,Adhesive,Bake_Program,
                                                 Process_1, Hour_1, Min_1, Temperature_1, Pressure_1,
-                                                Process_2, Hour_2, Min_2, Temperature_2, Pressure_2,BakeTime
+                                                Process_2, Hour_2, Min_2, Temperature_2, Pressure_2,BakeTime,isPressured
                                          From   OVEN_ASSY_FE_BakeTime
                                          Where  Area like '%{0}%'
                                                 And Adhesive like '%{1}%'
-                                                And Bake_Program like '%{2}%'", txtArea.Text.Trim().ToUpper(),
-                                                                                txtAdhesive.Text.Trim().ToUpper(),
-                                                                                txtBakeProgram.Text.Trim().ToUpper());
+                                                And Bake_Program like '%{2}%'
+                                                And isPressured = '{3}'", txtArea.Text.Trim().ToUpper(),
+                                                                          txtAdhesive.Text.Trim().ToUpper(),
+                                                                          txtBakeProgram.Text.Trim().ToUpper(),
+                                                                          (chkPressured.Checked) ? 'Y' : 'N');
             dt = ado.loadDataTable(str, null, "OVEN_ASSY_FE_BakeTime");
             GridViewAM.DataSource = dt;
             GridViewAM.DataBind();
             dtGv = dt;
             showPage();
+
+            //isPressured attributes
+            GridViewAM.Columns[4].Visible = chkPressured.Checked ? true : false;
+            GridViewAM.Columns[5].Visible = chkPressured.Checked ? true : false;
+            GridViewAM.Columns[6].Visible = chkPressured.Checked ? true : false;
+            GridViewAM.Columns[7].Visible = chkPressured.Checked ? true : false;
+            GridViewAM.Columns[8].Visible = chkPressured.Checked ? true : false;
+            GridViewAM.Columns[9].Visible = chkPressured.Checked ? true : false;
+            GridViewAM.Columns[10].Visible = chkPressured.Checked ? true : false;
+            GridViewAM.Columns[11].Visible = chkPressured.Checked ? true : false;
+            GridViewAM.Columns[12].Visible = chkPressured.Checked ? true : false;
+            GridViewAM.Columns[13].Visible = chkPressured.Checked ? true : false;
         }
 
         protected void GridViewAM_Sorting(object sender, GridViewSortEventArgs e)
@@ -95,7 +109,8 @@ namespace nModBusWeb
             TextBox gv_txtMin_2 = (TextBox)GridViewAM.Rows[e.RowIndex].Cells[0].FindControl("gv_txtMin_2");
             TextBox gv_txtTemperature_2 = (TextBox)GridViewAM.Rows[e.RowIndex].Cells[0].FindControl("gv_txtTemperature_2");
             TextBox gv_txtPressure_2 = (TextBox)GridViewAM.Rows[e.RowIndex].Cells[0].FindControl("gv_txtPressure_2");
-            TextBox gv_txtBakeTime = (TextBox)GridViewAM.Rows[e.RowIndex].Cells[0].FindControl("dv_txtBakeTime");
+            TextBox gv_txtBakeTime = (TextBox)GridViewAM.Rows[e.RowIndex].Cells[0].FindControl("gv_txtBakeTime");
+            CheckBox gv_chkIsPressured = (CheckBox)GridViewAM.Rows[e.RowIndex].Cells[0].FindControl("gv_chkIsPressured");
 
             string pk_Area = GridViewAM.DataKeys[e.RowIndex]["Area"].ToString();
             string pk_Adhesive = GridViewAM.DataKeys[e.RowIndex]["Adhesive"].ToString();
@@ -114,7 +129,7 @@ namespace nModBusWeb
             if (check)
             {
                 ado = new App_Code.AdoDbConn(App_Code.AdoDbConn.AdoDbType.Oracle, Conn);
-                string str = string.Format(@"Update spare_part.Oven_Assy_Fe_BakeTime 
+                string str = string.Format(@"Update Oven_Assy_Fe_BakeTime 
                                              Set    Process_1     = :Process_1,
                                                     Hour_1        = :Hour_1,
                                                     Min_1         = :Min_1,
@@ -125,12 +140,14 @@ namespace nModBusWeb
                                                     Min_2         = :Min_2,
                                                     Temperature_2 = :Temperature_2,
                                                     Pressure_2    = :pressure_2,
-                                                    BakeTime     = :BakeTime
+                                                    BakeTime      = :BakeTime,
+                                                    isPressured   = :isPressured
                                              Where  Area=:Area and Adhesive =:Adhesive and Bake_Program=:Bake_Program");
 
                 object[] para = new object[] { gv_txtProcess_1.Text.Trim(), gv_txtHour_1.Text.Trim(), gv_txtMin_1.Text.Trim(), gv_txtTemperature_1.Text.Trim(), gv_txtPressure_1.Text.Trim(),
                                                gv_txtProcess_2.Text.Trim(), gv_txtHour_2.Text.Trim(), gv_txtMin_2.Text.Trim(), gv_txtTemperature_2.Text.Trim(), gv_txtPressure_2.Text.Trim(),
-                                               gv_txtBakeTime.Text.Trim() ,pk_Area, pk_Adhesive, pk_Bake_Program };
+                                               gv_txtBakeTime.Text.Trim(),  gv_chkIsPressured.Checked?"Y":"N",
+                                               pk_Area, pk_Adhesive, pk_Bake_Program };
 
                 string reStr = (string)ado.dbNonQuery(str, para);
                 if (reStr.ToUpper().Contains("SUCCESS"))
@@ -148,8 +165,20 @@ namespace nModBusWeb
         }
         protected void GridViewAM_RowDataBound(object sender, GridViewRowEventArgs e)
         {
-            if (e.Row.RowType == DataControlRowType.DataRow)
+            if (e.Row.RowType == DataControlRowType.DataRow && (e.Row.RowState & DataControlRowState.Edit) == DataControlRowState.Edit )
             {
+                CheckBox gv_chkIsPressured = (CheckBox)e.Row.FindControl("gv_chkIsPressured");
+                ado = new App_Code.AdoDbConn(App_Code.AdoDbConn.AdoDbType.Oracle, Conn);
+                
+                string pk_Area = GridViewAM.DataKeys[e.Row.RowIndex]["Area"].ToString();
+                string pk_Adhesive = GridViewAM.DataKeys[e.Row.RowIndex]["Adhesive"].ToString();
+                string pk_Bake_Program = GridViewAM.DataKeys[e.Row.RowIndex]["Bake_Program"].ToString();
+
+                string str = string.Format(@"Select isPressured From Oven_Assy_Fe_BakeTime Where Area='{0}' and Adhesive='{1}' and Bake_Program='{2}'", pk_Area, pk_Adhesive, pk_Bake_Program);
+
+                DataTable dt = ado.loadDataTable(str, null, "Oven_Assy_Fe_BakeTime");
+
+                gv_chkIsPressured.Checked = dt.Rows[0]["isPressured"].ToString().Equals("Y") ? true : false;
             }
         }
         protected void GridViewAM_PageIndexChanging(object sender, GridViewPageEventArgs e)
@@ -172,7 +201,7 @@ namespace nModBusWeb
                     string pk_Adhesive = argument[1];
                     string pk_BakeProgram = argument[2];
 
-                    string sqlStr = string.Format(@"Delete from spare_part.Oven_Assy_Fe_Baketime
+                    string sqlStr = string.Format(@"Delete from Oven_Assy_Fe_Baketime
                                                     Where Area='{0}' and Adhesive='{1}' and Bake_Program='{2}'", pk_Area, pk_Adhesive, pk_BakeProgram);
                     string reStr = (string)ado.dbNonQuery(sqlStr, null);
                     if (reStr.ToUpper().Contains("SUCCESS"))
@@ -313,15 +342,15 @@ namespace nModBusWeb
             if (check == true)
             {
                 string TestStr = string.Format(@"Select * 
-                                                 From Spare_Part.Oven_Assy_Fe_BakeTime 
+                                                 From Oven_Assy_Fe_BakeTime 
                                                  Where Area='{0}' and Adhesive='{1}' and Bake_Program='{2}'", dv_ddlArea.Text.Trim(), dv_txtAdhesive.Text.Trim().ToUpper(), dv_txtBakeProgram.Text.Trim().ToUpper());
-                DataTable tester_dt = ado.loadDataTable(TestStr, null, "Spare_Part.Oven_Assy_FE_BakeTime");
+                DataTable tester_dt = ado.loadDataTable(TestStr, null, "Oven_Assy_FE_BakeTime");
                 if (tester_dt.Rows.Count > 0) { check = false; sb.Insert(0, "PTN重複定義，請檢查\\n\\n"); }                
             }
 
             if (check)
             {
-                string sqlStr = string.Format(@"Insert into Spare_Part.Oven_Assy_Fe_BakeTime (Area, Adhesive, Bake_Program,
+                string sqlStr = string.Format(@"Insert into Oven_Assy_Fe_BakeTime (Area, Adhesive, Bake_Program,
                                                                                               Process_1, Hour_1, Min_1, Temperature_1, Pressure_1,
                                                                                               Process_2, Hour_2, Min_2, Temperature_2, Pressure_2,
                                                                                               BakeTime)

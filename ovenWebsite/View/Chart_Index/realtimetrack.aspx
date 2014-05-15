@@ -22,9 +22,9 @@ private void drawChart(WebChartViewer viewer)
     DateTime[] timeStamps = new DateTime[sampleSize];
 
     // Our pseudo random number generator
-    DateTime firstDate = DateTime.Now.AddSeconds(-timeStamps.Length);
+    DateTime firstDate = DateTime.Now.AddSeconds(-timeStamps.Length);    
     for(int i = 0; i < timeStamps.Length; ++i) {
-        timeStamps[i] = firstDate.AddSeconds(i);
+        timeStamps[i] = firstDate.AddSeconds(i);        
         double p = timeStamps[i].Ticks / 10000000;
         dataSeries1[i] = Math.Cos(p * 2.1) * 10 + 1 / (Math.Cos(p) * Math.Cos(p) + 0.01) + 20;
         dataSeries2[i] = 100 * Math.Sin(p / 27.7) * Math.Sin(p / 10.1) + 150;

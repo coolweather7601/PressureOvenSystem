@@ -38,7 +38,7 @@ namespace ovenWin
                 serialPort.StopBits = StopBits.One;
                 serialPort.DataBits = 8;
 
-                //args = new string[] { "COM11", "OV0204-1" , "120" , "1-0-2-110-7|2-0-2-126-7", "941E43C108"}; //LOCAL TEST
+                //args = new string[] { "COM11", "OV0204-1" , "3" , "1-0-2-110-7|2-0-1-126-7", "941E43C108"}; //LOCAL TEST
                 if (args != null && args.Length > 0)
                 {
                     //args[0] -> COM
@@ -68,8 +68,8 @@ namespace ovenWin
                         Console.WriteLine("LimitTemp2" + LimitTemp2 + Environment.NewLine);
                         Console.WriteLine("LimitPressure2: " + LimitPressure2 + Environment.NewLine);
                     }
-                    //ScanTime = bakeTime + bakeTime2;
-                    ScanTime = Convert.ToDouble(args[2].ToString());
+                    ScanTime = bakeTime + bakeTime2;
+                    //ScanTime = Convert.ToDouble(args[2].ToString()) * 60 * 1000;
 
                     Console.WriteLine("COM: " + args[0].ToString() + Environment.NewLine);
                     Console.WriteLine("MachineID: " + args[1].ToString() + Environment.NewLine);
@@ -103,10 +103,9 @@ namespace ovenWin
             }
             catch (Exception ex) { Console.WriteLine("Exception: " + ex.ToString()); }
         }
-
         private static void tmr_func(System.Timers.Timer _tmr)
         {
-            Console.WriteLine(string.Format(@"{0}.",DateTime.Now.ToString()));
+            Console.WriteLine(string.Format(@"Timer Start : {0}.",DateTime.Now.ToString()));
             
             StartTime += TimeInterval;
 
@@ -218,8 +217,8 @@ namespace ovenWin
                     new ushort[]{ec.error642,642}, new ushort[]{ec.error643,643}, new ushort[]{ec.error644,644}, new ushort[]{ec.error645,645}, new ushort[]{ec.error646,646},
                     new ushort[]{ec.error647,647}, new ushort[]{ec.error648,648}, new ushort[]{ec.error649,649}, new ushort[]{ec.error650,650}, new ushort[]{ec.error651,651},
                     new ushort[]{ec.error652,652}, new ushort[]{ec.error653,653}, new ushort[]{ec.error654,654}, new ushort[]{ec.error655,655}, new ushort[]{ec.error656,656},
-                    new ushort[]{ec.error657,657}, new ushort[]{ec.error658,658}, new ushort[]{ec.error659,659}, new ushort[]{ec.error660,660},
-                    new ushort[]{fc.Terminate,0}
+                    new ushort[]{ec.error657,657}, new ushort[]{ec.error658,658}, new ushort[]{ec.error659,659}, new ushort[]{ec.error660,660}
+                    //,new ushort[]{fc.Terminate,0}
                 };
 
                 List<string> stopStr = new List<string>();
@@ -248,11 +247,21 @@ namespace ovenWin
                         break;
                     }
                 }
+
+                //無法自動停timer, 用時間來強制停止
+                if (StartTime >= ScanTime)
+                {
+                    timerStop = true; 
+                    string str_stop = string.Format(@"insert into oven_assy_log(oven_assy_logid,machine_ID,oven_Assy_logKindID,Time,Batch_NO)
+                                                   values(oven_assy_log_sequence.nextval,'{0}','0',SYSDATE,'{1}')", Machine_ID, Batch_NO);
+                    ado.dbNonQuery(str_stop, null);
+                }
+
                 if (timerStop)
                 {
                     _tmr.Stop();
                     Console.WriteLine("error: timer stop.");
-                    //Mode(machineMode.close);
+                    Mode(machineMode.close);
                 }
                 
             }
@@ -330,16 +339,21 @@ namespace ovenWin
         {
             try
             {
+                App_Code.FunctionCode fc = new App_Code.FunctionCode();
                 switch (_mode.ToString())
                 {
-                    case "open":
-                        App_Code.FunctionCode fc = new App_Code.FunctionCode();
+                    case "open":                        
                         startAddress = fc.OnBtnTwinkle;
                         master.WriteSingleRegister(slaveID, (ushort)startAddress, (ushort)Convert.ToInt32("1"));//write
                         ushort[] register_read = master.ReadHoldingRegisters(slaveID, (ushort)startAddress, numOfPoints);//read
                         Console.WriteLine(string.Format(@"Start Monitor 十進位：{0}{1}十六進位：{2}", register_read[0].ToString(), Environment.NewLine, Convert.ToString(Convert.ToInt32(register_read[0].ToString()), 16)));
                         break;
                     case "close":
+                        //startAddress = fc.StopMachine;
+                        //master.WriteSingleRegister(slaveID, (ushort)startAddress, (ushort)Convert.ToInt32("1"));//write
+                        //ushort[] register_close = master.ReadHoldingRegisters(slaveID, (ushort)startAddress, numOfPoints);//read
+                        //Console.WriteLine(string.Format(@"Stop Monitor 十進位：{0}{1}十六進位：{2}", register_close[0].ToString(), Environment.NewLine, Convert.ToString(Convert.ToInt32(register_close[0].ToString()), 16)));
+
                         serialPort.Close();
                         Environment.Exit(0); 
                         break;
@@ -415,7 +429,7 @@ namespace ovenWin
 
         static void mail(string contact, string mail_data)
         {
-            string title = "Pressure Oven System Fail";
+             string title = "Pressure Oven System Fail";
             using (OracleConnection connection = new OracleConnection(ovenWin.Properties.Settings.Default.MAIL))
             {
                 connection.Open();

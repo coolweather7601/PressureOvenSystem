@@ -34,18 +34,23 @@ namespace nModBusWeb
         {
             ado = new App_Code.AdoDbConn(App_Code.AdoDbConn.AdoDbType.Oracle, Conn);
             DataTable dt = new DataTable();
-            string str = string.Format(@"Select Area,Oven_ID,Machine_ID,IsPressured
+            string str = string.Format(@"Select Area,Oven_ID,Machine_ID,POS_X,POS_Y,IsPressured
                                          From   OVEN_ASSY_Location
                                          Where  Area like '%{0}%'
                                                 And Oven_ID like '%{1}%'
-                                                And Machine_ID like '%{2}%'", txtArea.Text.Trim().ToUpper(),
-                                                                              txtOvenid.Text.Trim().ToUpper(),
-                                                                              txtMachineid.Text.Trim().ToUpper());
+                                                And Machine_ID like '%{2}%'
+                                                And isPressured = '{3}'", txtArea.Text.Trim().ToUpper(),
+                                                                          txtOvenid.Text.Trim().ToUpper(),
+                                                                          txtMachineid.Text.Trim().ToUpper(),
+                                                                          chkPressured.Checked ? "Y" : "N");
             dt = ado.loadDataTable(str, null, "OVEN_ASSY_Location");
             GridViewOV.DataSource = dt;
             GridViewOV.DataBind();
             dtGv = dt;
             showPage();
+
+            //isPressured attributes
+            //GridViewOV.Columns[4].Visible = chkPressured.Checked ? true : false;
         }
 
         protected void GridViewOV_Sorting(object sender, GridViewSortEventArgs e)
@@ -83,13 +88,11 @@ namespace nModBusWeb
         }
         protected void GridViewOV_RowUpdating(object sender, GridViewUpdateEventArgs e)
         {
-            
-            RadioButton gv_rdoIsPressured_Y = (RadioButton)GridViewOV.Rows[e.RowIndex].Cells[0].FindControl("rdoIsPressured_Y");
-            RadioButton gv_rdoIsPressured_N = (RadioButton)GridViewOV.Rows[e.RowIndex].Cells[0].FindControl("rdoIsPressured_N");
+            CheckBox gv_chkIsPressured = (CheckBox)GridViewOV.Rows[e.RowIndex].Cells[0].FindControl("gv_chkIsPressured");
 
             string pk_Area = GridViewOV.DataKeys[e.RowIndex]["Area"].ToString();
             string pk_OvenID = GridViewOV.DataKeys[e.RowIndex]["OVEN_ID"].ToString();
-            string pk_MahcineID = GridViewOV.DataKeys[e.RowIndex]["Machine_ID"].ToString();
+            string pk_MachineID = GridViewOV.DataKeys[e.RowIndex]["Machine_ID"].ToString();
 
             //check
             sb = new StringBuilder();
@@ -108,9 +111,7 @@ namespace nModBusWeb
                                              Set    isPressured = :isPressured
                                              Where  Area=:Area and Oven_ID =:Oven_ID and Machine_ID=:Machine_ID");
 
-                string rdo = gv_rdoIsPressured_Y.Checked ? "Y" : "N";
-                if (gv_rdoIsPressured_Y.Checked == false && gv_rdoIsPressured_N.Checked == false) rdo = null;
-                object[] para = new object[] { rdo, pk_Area, pk_OvenID, pk_MahcineID };
+                object[] para = new object[] { gv_chkIsPressured.Checked ? "Y" : "N", pk_Area, pk_OvenID, pk_MachineID };
 
                 string reStr = (string)ado.dbNonQuery(str, para);
                 if (reStr.ToUpper().Contains("SUCCESS"))
@@ -128,8 +129,20 @@ namespace nModBusWeb
         }
         protected void GridViewOV_RowDataBound(object sender, GridViewRowEventArgs e)
         {
-            if (e.Row.RowType == DataControlRowType.DataRow)
+            if (e.Row.RowType == DataControlRowType.DataRow && (e.Row.RowState & DataControlRowState.Edit) == DataControlRowState.Edit)
             {
+                CheckBox gv_chkIsPressured = (CheckBox)e.Row.FindControl("gv_chkIsPressured");
+                ado = new App_Code.AdoDbConn(App_Code.AdoDbConn.AdoDbType.Oracle, Conn);
+
+                string pk_Area = GridViewOV.DataKeys[e.Row.RowIndex]["Area"].ToString();
+                string pk_OvenID = GridViewOV.DataKeys[e.Row.RowIndex]["OVEN_ID"].ToString();
+                string pk_MachineID = GridViewOV.DataKeys[e.Row.RowIndex]["Machine_ID"].ToString();
+
+                string str = string.Format(@"Select isPressured From Oven_Assy_Location Where Area='{0}' and Oven_ID ='{1}' and Machine_ID='{2}'", pk_Area, pk_OvenID, pk_MachineID);
+
+                DataTable dt = ado.loadDataTable(str, null, "Oven_Assy_Location");
+
+                gv_chkIsPressured.Checked = dt.Rows[0]["isPressured"].ToString().Equals("Y") ? true : false;
             }
         }
         protected void GridViewOV_PageIndexChanging(object sender, GridViewPageEventArgs e)
@@ -253,5 +266,123 @@ namespace nModBusWeb
         {
             gridviewBind();
         }
-    }
+
+        protected void btnNew_Click(object sender, EventArgs e)
+        {
+            GridViewOV.DataSource = null;
+            GridViewOV.DataBind();
+            DetailsView1.ChangeMode(DetailsViewMode.Insert);
+        }
+
+        protected void DetailsView1_ItemInserting(object sender, DetailsViewInsertEventArgs e)
+        {
+            ado = new App_Code.AdoDbConn(App_Code.AdoDbConn.AdoDbType.Oracle, Conn);
+            DropDownList dv_ddlArea = ((DropDownList)DetailsView1.FindControl("dv_ddlArea"));
+            TextBox dv_txtOvenID = ((TextBox)DetailsView1.FindControl("dv_txtOvenID"));
+            TextBox dv_txtMachineID = ((TextBox)DetailsView1.FindControl("dv_txtMachineID"));
+            TextBox dv_txtPOSX = ((TextBox)DetailsView1.FindControl("dv_txtPOSX"));
+            TextBox dv_txtPOSY = ((TextBox)DetailsView1.FindControl("dv_txtPOSY"));
+            CheckBox dv_chkIsPressured = (CheckBox)DetailsView1.FindControl("dv_chkIsPressured");
+            TextBox dv_txtComport = (TextBox)DetailsView1.FindControl("dv_txtComport");
+            
+            //Check
+            sb = new StringBuilder();
+            bool check = true;
+
+            if (dv_ddlArea.Text.Equals("0")) { sb.Append("【Area】"); }
+            if (string.IsNullOrEmpty(dv_txtOvenID.Text)) { sb.Append("【Oven_ID】"); }
+            if (string.IsNullOrEmpty(dv_txtMachineID.Text)) { sb.Append("【Machine_ID】"); }
+            if (string.IsNullOrEmpty(dv_txtPOSX.Text)) { sb.Append("【POS_X】"); }
+            if (string.IsNullOrEmpty(dv_txtPOSY.Text)) { sb.Append("【POS_Y】"); }
+            if (!string.IsNullOrEmpty(sb.ToString())) { check = false; sb.Insert(0, "以下欄位未填\\n\\n"); }
+
+            if (check == true)
+            {
+                string TestStr1 = string.Format(@"Select * 
+                                                 From Oven_Assy_Location
+                                                 Where Machine_ID='{0}'", dv_txtMachineID.Text.Trim().ToUpper());
+                DataTable tester_dt1 = ado.loadDataTable(TestStr1, null, "Oven_Assy_Location");
+                if (tester_dt1.Rows.Count > 0) { check = false; sb.Insert(0, "Machine_ID重複定義，請檢查\\n\\n"); }
+
+                string TestStr2 = string.Format(@"Select * 
+                                                 From Oven_Assy_Location
+                                                 Where Area='{0}' and OVEN_ID='{1}'", dv_ddlArea.Text.Trim(),
+                                                                                      dv_txtOvenID.Text.Trim().ToUpper());
+                DataTable tester_dt2 = ado.loadDataTable(TestStr2, null, "Oven_Assy_Location");
+                if (tester_dt2.Rows.Count > 0) { check = false; sb.Insert(0, "Location重複定義，請檢查\\n\\n"); }
+            }
+
+            if (check)
+            {
+                string sqlStr = string.Format(@"Insert into Oven_Assy_Location (Area, OVEN_ID, Machine_ID, POS_X, POS_Y, isPressured,Comport)
+                                                Values (:Area, :OVEN_ID, :Machine_ID,:POS_X, :POS_Y, :isPressured,:Comport)");
+                object[] para = new object[] { dv_ddlArea.Text.Trim().ToUpper(), dv_txtOvenID.Text.Trim().ToUpper(), dv_txtMachineID.Text.Trim().ToUpper(),
+                                               dv_txtPOSX.Text.Trim(), dv_txtPOSY.Text.Trim(),dv_chkIsPressured.Checked?"Y":"N",dv_txtComport.Text.Trim() };
+
+                string reStr = (string)ado.dbNonQuery(sqlStr, para);
+                if (reStr.ToUpper().Contains("SUCCESS"))
+                    ScriptManager.RegisterStartupScript(this, this.GetType(), "js", "alert('該筆資料新增成功。');", true);
+                else
+                    ScriptManager.RegisterStartupScript(this, this.GetType(), "js", string.Format(@"alert('{0}');", reStr.Replace("\n", "")), true);
+
+                DetailsView1.ChangeMode(DetailsViewMode.ReadOnly);
+                DetailsView1.DataSource = null;
+                DetailsView1.DataBind();
+
+                gridviewBind();
+            }
+            else
+            {
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "js", string.Format(@"alert('{0}');", sb.ToString()), true);
+            }
+        }
+        protected void DetailsView1_ItemCommand(object sender, DetailsViewCommandEventArgs e)
+        {
+            if (e.CommandName.Equals("cancel", StringComparison.CurrentCultureIgnoreCase))
+            {
+                DetailsView1.ChangeMode(DetailsViewMode.ReadOnly);
+                DetailsView1.DataSource = null;
+                DetailsView1.DataBind();
+
+                gridviewBind();
+            }
+        }
+        protected void DetailsView1_DataBound(object sender, EventArgs e)
+        {
+            if (DetailsView1.CurrentMode == DetailsViewMode.Insert)
+            {
+                ado = new App_Code.AdoDbConn(App_Code.AdoDbConn.AdoDbType.Oracle, Conn);
+                string str = "select distinct area from oven_assy_location";
+                DataTable dt = ado.loadDataTable(str, null, "oven_assy_location");
+
+                DropDownList dv_ddlArea = (DropDownList)DetailsView1.FindControl("dv_ddlArea");
+                dv_ddlArea.Items.Clear();
+                foreach (DataRow dr in dt.Rows)
+                {
+                    dv_ddlArea.Items.Add(new ListItem(dr["area"].ToString()));
+                }
+                dv_ddlArea.Items.Insert(0, new ListItem("請選擇", "0"));
+            }
+        }
+        protected void DetailsView1_ModeChanging(object sender, DetailsViewModeEventArgs e)
+        {
+
+        }
+        protected void dv_chkIsPressured_CheckedChanged(object sender, EventArgs e)
+        {
+            Label dv_lblComport = (Label)DetailsView1.FindControl("dv_lblComport");
+            TextBox dv_txtComport = (TextBox)DetailsView1.FindControl("dv_txtComport");
+
+            if (((CheckBox)sender).Checked)
+            {
+                dv_lblComport.Visible = true;
+                dv_txtComport.Visible = true;
+            }
+            else
+            {
+                dv_lblComport.Visible = false;
+                dv_txtComport.Visible = false;
+            }
+        }
+}
 }

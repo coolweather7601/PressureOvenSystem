@@ -12,8 +12,10 @@
             <td><asp:TextBox ID="txtArea" runat="server"></asp:TextBox></td>
             <td>Adhesive：</td>
             <td><asp:TextBox ID="txtAdhesive" runat="server"></asp:TextBox></td>
-            <td>Bake Program：</td>
+            <td>PTN：</td>
             <td><asp:TextBox ID="txtBakeProgram" runat="server"></asp:TextBox></td>
+            <td>isPressured：</td>            
+            <td><asp:CheckBox ID="chkPressured" runat="server" Checked="true"/></td>
             <td style="text-align:right;"><asp:Button ID="btnSearch" runat="server" Text="Search" OnClick="btnSearch_Click" /></td>
         </tr>
     </table>
@@ -168,6 +170,14 @@
                         <asp:Label ID="Label4" runat="server" Text='<%# Bind("BakeTime") %>'></asp:Label>
                     </ItemTemplate>
                     <HeaderStyle Width="10%" />
+                </asp:TemplateField>
+                <asp:TemplateField HeaderText="IsPressured">
+                    <EditItemTemplate>
+                        <asp:CheckBox ID="gv_chkIsPressured" runat="server" />
+                    </EditItemTemplate>
+                    <ItemTemplate>
+                        <asp:Label ID="Label54" runat="server" Text='<%# Bind("IsPressured") %>'></asp:Label>
+                    </ItemTemplate>
                 </asp:TemplateField>
                 <asp:TemplateField HeaderText="Edit" Visible="false">
                     <EditItemTemplate>

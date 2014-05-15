@@ -37,9 +37,9 @@ namespace nModBusWeb.App_Code
             AdoDbConn ado = new AdoDbConn(AdoDbConn.AdoDbType.Oracle, Conn);
             DataTable dt = new DataTable();
             string str = string.Format(@"Select Area,Oven_ID,Machine_ID 
-                                         From spare_part.OVEN_ASSY_LOCATION
-                                         Where Machine_ID = '{0}'", MachineID);
-            dt = ado.loadDataTable(str, null, "spare_part.OVEN_ASSY_LOCATION");
+                                         From OVEN_ASSY_LOCATION
+                                         Where Machine_ID = '{0}' and isPressured='Y'", MachineID);
+            dt = ado.loadDataTable(str, null, "OVEN_ASSY_LOCATION");
 
             return dt.Rows.Count > 0 ? dt.Rows[0] : null;
         }
@@ -51,26 +51,25 @@ namespace nModBusWeb.App_Code
         /// <param name="_PTN"></param>
         /// <param name="_Adhesive"></param>
         /// <returns>Table</returns>
-        public DataTable getDataFromMsdb(string _Area,string _PTN,string _Adhesive)
+        public DataTable getDataFromMsdb(string _Area, string _Adhesive)
         {
             string str = string.Format(@"Select Area,Adhesive,Bake_Program,BakeTime
-                                         From spare_part.OVEN_ASSY_FE_BAKETIME
-                                         Where Area {0} and Bake_Program {1} and Adhesive {2}",
+                                         From OVEN_ASSY_FE_BAKETIME
+                                         Where Area {0} and Adhesive {1} and isPressured='Y'",
                                                string.IsNullOrEmpty(_Area) ? " like '%'" : string.Format(@" ='{0}'", _Area),
-                                               string.IsNullOrEmpty(_PTN) ? " like '%'" : string.Format(@" ='{0}'", _PTN),
                                                string.IsNullOrEmpty(_Adhesive) ? " like '%'" : string.Format(@" ='{0}'", _Adhesive));
                      
-            if (string.IsNullOrEmpty(_Area) && string.IsNullOrEmpty(_PTN) && string.IsNullOrEmpty(_Adhesive))
+            if (string.IsNullOrEmpty(_Area) && string.IsNullOrEmpty(_Adhesive))
             {
                 str = @"Select Area,Adhesive,Bake_Program,BakeTime
-                        From spare_part.OVEN_ASSY_FE_BAKETIME
-                        Where Area ='' and Bake_Program ='' and Adhesive =''";
+                        From OVEN_ASSY_FE_BAKETIME
+                        Where Area ='' and Adhesive ='' and isPressured = 'Y'";
             }
 
             string Conn = System.Configuration.ConfigurationManager.ConnectionStrings["OVEN"].ToString();//OVEN
             AdoDbConn ado = new AdoDbConn(AdoDbConn.AdoDbType.Oracle, Conn);
             DataTable dt = new DataTable();
-            dt = ado.loadDataTable(str, null, "spare_part.OVEN_ASSY_FE_BAKETIME");
+            dt = ado.loadDataTable(str, null, "OVEN_ASSY_FE_BAKETIME");
             return dt;
         }
 
@@ -151,8 +150,8 @@ namespace nModBusWeb.App_Code
                             if (gvID.Equals("GridViewAM") &&
                                 (Convert.ToInt32(HttpContext.Current.Session["RoleID"]) == (int)Role.Administrator) || Convert.ToInt32(HttpContext.Current.Session["RoleID"]) == (int)Role.Supervisor)
                             {                                
-                                ((GridView)ctr).Columns[15].Visible = true;
                                 ((GridView)ctr).Columns[16].Visible = true;
+                                ((GridView)ctr).Columns[17].Visible = true;
                             }
 
                             //==================================================================================
@@ -161,8 +160,8 @@ namespace nModBusWeb.App_Code
                             if (gvID.Equals("GridViewOV") &&
                                 (Convert.ToInt32(HttpContext.Current.Session["RoleID"]) == (int)Role.Administrator) || Convert.ToInt32(HttpContext.Current.Session["RoleID"]) == (int)Role.Supervisor)
                             {
-                                ((GridView)ctr).Columns[5].Visible = true;
-                                if ((Convert.ToInt32(HttpContext.Current.Session["RoleID"]) == (int)Role.Administrator)) ((GridView)ctr).Columns[6].Visible = true;
+                                ((GridView)ctr).Columns[7].Visible = true;
+                                if ((Convert.ToInt32(HttpContext.Current.Session["RoleID"]) == (int)Role.Administrator)) ((GridView)ctr).Columns[8].Visible = true;
                             }
                             break;
                         #endregion
@@ -244,6 +243,35 @@ namespace nModBusWeb.App_Code
                 return dt;
             }
             catch (Exception e) { return null; }
+        }
+
+        public DataTable getCompleteLotData(List<string> lst)
+        {
+            //create new datatable
+            DataTable dt_new = new DataTable();
+            dt_new.Columns.Add("Batch");
+            dt_new.Columns.Add("Type");//LocalTypeName
+            dt_new.Columns.Add("Package");//AssmblyCG
+            dt_new.Columns.Add("Adhesive");//AdhesiveDecription
+            dt_new.Columns.Add("Adhesive2");//Adhesive2Decription
+
+            foreach (string batchNo in lst)
+            {
+                apkvm1013.Service sfc = new apkvm1013.Service();
+                string Type = sfc.getCompleteLotData(batchNo.ToUpper()).LocalTypeName.ToString();
+                string Package = sfc.getCompleteLotData(batchNo.ToUpper()).AssemblyCG.ToString();
+                string Adhesive = sfc.getCompleteLotData(batchNo.ToUpper()).AdhesiveDescription.ToString();
+                string Adhesive2 = sfc.getCompleteLotData(batchNo.ToUpper()).Adhesive2Description.ToString();
+                
+                DataRow dr_new = dt_new.NewRow();
+                dr_new[0] = batchNo;
+                dr_new[1] = Type;
+                dr_new[2] = Package;
+                dr_new[3] = Adhesive;
+                dr_new[4] = Adhesive2;
+                dt_new.Rows.Add(dr_new);
+            }
+            return dt_new;
         }
     }
 }

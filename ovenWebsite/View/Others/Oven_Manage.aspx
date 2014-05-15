@@ -14,9 +14,13 @@
             <td><asp:TextBox ID="txtOvenid" runat="server"></asp:TextBox></td>
             <td>Machine_ID：</td>
             <td><asp:TextBox ID="txtMachineid" runat="server"></asp:TextBox></td>
+            <td>isPressured：</td>            
+            <td><asp:CheckBox ID="chkPressured" runat="server" Checked="true"/></td>
             <td style="text-align:right;"><asp:Button ID="btnSearch" runat="server" Text="Search" OnClick="btnSearch_Click" /></td>
         </tr>
     </table>
+
+    <asp:Button ID="btnNew" runat="server"  Text="New OVEN" OnClick="btnNew_Click" Visible="false" />
 
     <asp:GridView ID="GridViewOV" runat="server" 
             DataKeyNames="Area,OVEN_ID,Machine_ID" AutoGenerateColumns="False"
@@ -56,10 +60,23 @@
                     </ItemTemplate>
                     <HeaderStyle Width="20%" />
                 </asp:TemplateField>
+                
+                <asp:TemplateField HeaderText="POS_X" SortExpression="POS_X">
+                    <ItemTemplate>
+                        <asp:Label ID="Label23" runat="server" Text='<%# Bind("POS_X") %>'></asp:Label>
+                    </ItemTemplate>
+                    <HeaderStyle Width="20%" />
+                </asp:TemplateField>
+                 <asp:TemplateField HeaderText="POS_Y" SortExpression="POS_Y">
+                    <ItemTemplate>
+                        <asp:Label ID="Label24" runat="server" Text='<%# Bind("POS_Y") %>'></asp:Label>
+                    </ItemTemplate>
+                    <HeaderStyle Width="20%" />
+                </asp:TemplateField>
+
                 <asp:TemplateField HeaderText="IsPressured">
                     <EditItemTemplate>
-                        <asp:RadioButton ID="rdoIsPressured_Y" Text="Yes" GroupName="rdo" runat="server" />
-                        <asp:RadioButton ID="rdoIsPressured_N" Text="No" GroupName="rdo" runat="server" />
+                        <asp:CheckBox ID="gv_chkIsPressured" runat="server" />
                     </EditItemTemplate>
                     <ItemTemplate>
                         <asp:Label ID="Label04" runat="server" Text='<%# Bind("IsPressured") %>'></asp:Label>
@@ -109,6 +126,84 @@
             <AlternatingRowStyle BackColor="#CCCCCC" />  
         </asp:GridView>
 
+    <asp:DetailsView ID="DetailsView1" runat="server" Height="50px" Width="125px" AutoGenerateRows="False"
+         CellPadding="4" ForeColor="#333333" GridLines="None" 
+         OnItemCommand="DetailsView1_ItemCommand" 
+         OnModeChanging="DetailsView1_ModeChanging" 
+         OnItemInserting="DetailsView1_ItemInserting" OnDataBound="DetailsView1_DataBound">
+                <Fields>                
+                    <asp:TemplateField HeaderText="Area">
+                        <InsertItemTemplate>
+                            <asp:DropDownList ID="dv_ddlArea" runat="server">
+                            </asp:DropDownList>
+                        </InsertItemTemplate>
+                    </asp:TemplateField>     
+                    <asp:TemplateField HeaderText="OVEN_ID">
+                        <InsertItemTemplate>
+                            <asp:TextBox ID="dv_txtOvenID" runat="server" Text='<%# Bind("Oven_ID") %>'></asp:TextBox>
+                        </InsertItemTemplate>
+                        <ItemTemplate>
+                            <asp:Label ID="Label02" runat="server" Text='<%# Bind("Oven_ID") %>'></asp:Label>
+                        </ItemTemplate>
+                    </asp:TemplateField>  
+                   <asp:TemplateField HeaderText="Machine_ID">
+                        <InsertItemTemplate>
+                            <asp:TextBox ID="dv_txtMachineID" runat="server" Text='<%# Bind("Machine_ID") %>'></asp:TextBox>
+                        </InsertItemTemplate>
+                        <ItemTemplate>
+                            <asp:Label ID="Label03" runat="server" Text='<%# Bind("Machine_ID") %>'></asp:Label>
+                        </ItemTemplate>
+                    </asp:TemplateField>
+                    <asp:TemplateField HeaderText="POS_X">
+                        <InsertItemTemplate>
+                            <asp:TextBox ID="dv_txtPOSX" runat="server" Text='<%# Bind("POS_X") %>'></asp:TextBox>
+                        </InsertItemTemplate>
+                        <ItemTemplate>
+                            <asp:Label ID="Label04" runat="server" Text='<%# Bind("POS_X") %>'></asp:Label>
+                        </ItemTemplate>
+                    </asp:TemplateField>
+                    <asp:TemplateField HeaderText="POS_Y">
+                        <InsertItemTemplate>
+                            <asp:TextBox ID="dv_txtPOSY" runat="server" Text='<%# Bind("POS_Y") %>'></asp:TextBox>
+                        </InsertItemTemplate>
+                        <ItemTemplate>
+                            <asp:Label ID="Label05" runat="server" Text='<%# Bind("POS_Y") %>'></asp:Label>
+                        </ItemTemplate>
+                    </asp:TemplateField>
+                    <asp:TemplateField HeaderText="isPressured">
+                        <InsertItemTemplate>
+                            <table>
+                                <tr><td colspan='2'><asp:CheckBox ID="dv_chkIsPressured" runat="server" AutoPostBack="true" oncheckedchanged="dv_chkIsPressured_CheckedChanged" /></td></tr>
+                                <tr>
+                                    <td><asp:Label ID="dv_lblComport" runat="server" Text="COM" Visible="false"></asp:Label></td>
+                                    <td><asp:TextBox ID="dv_txtComport" runat="server" Visible="false"></asp:TextBox></td>
+                                </tr>
+                            </table>                         
+                        </InsertItemTemplate>
+                    </asp:TemplateField>
+
+                    <asp:TemplateField HeaderText="Action" ShowHeader="False">
+                        <InsertItemTemplate>
+                            <asp:LinkButton ID="LinkButton1" runat="server" CausesValidation="True" CommandName="Insert"
+                                Text="Insert"></asp:LinkButton>
+                            <asp:LinkButton ID="LinkButton2" runat="server" CausesValidation="False" CommandName="Cancel"
+                                Text="Cancel"></asp:LinkButton>
+                        </InsertItemTemplate>
+                        <ItemTemplate>
+                            <asp:LinkButton ID="LinkButton1" runat="server" CausesValidation="False" CommandName="New"
+                                Text="新增"></asp:LinkButton>
+                        </ItemTemplate>
+                    </asp:TemplateField>
+                </Fields>
+            <FooterStyle BackColor="#5D7B9D" Font-Bold="True" ForeColor="White" />
+            <CommandRowStyle BackColor="#E2DED6" Font-Bold="True" />
+            <RowStyle BackColor="#F7F6F3" ForeColor="#333333" />
+            <FieldHeaderStyle BackColor="#E9ECF1" Font-Bold="True" />
+            <PagerStyle BackColor="#284775" ForeColor="White" HorizontalAlign="Center" />
+            <HeaderStyle BackColor="#5D7B9D" Font-Bold="True" ForeColor="White" />
+            <EditRowStyle BackColor="#999999" />
+            <AlternatingRowStyle BackColor="White" ForeColor="#284775" />
+        </asp:DetailsView>
     </ContentTemplate>
 </asp:UpdatePanel>
 </asp:Content>
