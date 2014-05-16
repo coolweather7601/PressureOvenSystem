@@ -327,6 +327,7 @@ namespace nModBusWeb
             TextBox dv_txtTemperature_2 = ((TextBox)DetailsView1.FindControl("dv_txtTemperature_2"));
             TextBox dv_txtPressure_2 = ((TextBox)DetailsView1.FindControl("dv_txtPressure_2"));
             TextBox dv_txtBakeTime = ((TextBox)DetailsView1.FindControl("dv_txtBakeTime"));
+            CheckBox dv_chkIsPressured = ((CheckBox)DetailsView1.FindControl("dv_chkIsPressured"));
 
             //Check
             sb = new StringBuilder();
@@ -351,17 +352,17 @@ namespace nModBusWeb
             if (check)
             {
                 string sqlStr = string.Format(@"Insert into Oven_Assy_Fe_BakeTime (Area, Adhesive, Bake_Program,
-                                                                                              Process_1, Hour_1, Min_1, Temperature_1, Pressure_1,
-                                                                                              Process_2, Hour_2, Min_2, Temperature_2, Pressure_2,
-                                                                                              BakeTime)
+                                                                                   Process_1, Hour_1, Min_1, Temperature_1, Pressure_1,
+                                                                                   Process_2, Hour_2, Min_2, Temperature_2, Pressure_2,
+                                                                                   BakeTime,isPressured)
                                                 Values (:Area, :Adhesive, :Bake_Program,
                                                         :Process_1, :Hour_1, :Min_1, :Temperature_1, :Pressure_1,
                                                         :Process_2, :Hour_2, :Min_2, :Temperature_2, :Pressure_2,
-                                                        :BakeTime)");
+                                                        :BakeTime,:isPressured)");
                 object[] para = new object[] { dv_ddlArea.Text.Trim().ToUpper(), dv_txtAdhesive.Text.Trim().ToUpper(), dv_txtBakeProgram.Text.Trim().ToUpper(),
                                                dv_txtProcess_1.Text.Trim(), dv_txtHour_1.Text.Trim(), dv_txtMin_1.Text.Trim(), dv_txtTemperature_1.Text.Trim(), dv_txtPressure_1.Text.Trim(),
                                                dv_txtProcess_2.Text.Trim(), dv_txtHour_2.Text.Trim(), dv_txtMin_2.Text.Trim(), dv_txtTemperature_2.Text.Trim(), dv_txtPressure_2.Text.Trim(),
-                                               dv_txtBakeTime.Text.Trim().ToUpper() };
+                                               dv_txtBakeTime.Text.Trim().ToUpper(),dv_chkIsPressured.Checked?"Y":"N" };
                 
                 string reStr = (string)ado.dbNonQuery(sqlStr, para);
                 if (reStr.ToUpper().Contains("SUCCESS"))

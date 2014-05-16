@@ -342,6 +342,11 @@
                             <asp:Label ID="Label010" runat="server" Text='<%# Bind("BakeTime") %>'></asp:Label>
                         </ItemTemplate>
                     </asp:TemplateField>  
+                    <asp:TemplateField HeaderText="IsPressured">
+                        <InsertItemTemplate>
+                            <asp:CheckBox ID="dv_chkIsPressured" runat="server" />
+                        </InsertItemTemplate>
+                    </asp:TemplateField>
                     <asp:TemplateField HeaderText="Action" ShowHeader="False">
                         <InsertItemTemplate>
                             <asp:LinkButton ID="LinkButton1" runat="server" CausesValidation="True" CommandName="Insert"

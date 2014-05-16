@@ -21,7 +21,7 @@ namespace nModBusWeb
         static private SerialPort serialPort;
         static private ModbusSerialMaster master;
         static private DataTable dtGv;
-        static List<string> lst_BC = new List<string>();
+        static List<string> lst_BC;
         static private string conn = System.Configuration.ConfigurationManager.ConnectionStrings["OVEN"].ToString();
          
 
@@ -31,7 +31,8 @@ namespace nModBusWeb
             {
                 App_Code.func fc = new App_Code.func();
                 fc.checkRole(Page.Master);
-                                
+                lst_BC = new List<string>();
+
                 if (string.IsNullOrEmpty(Request.QueryString["USER"]) || string.IsNullOrEmpty(Request.QueryString["Machine_ID"]))
                 {
                     if (System.Web.Configuration.WebConfigurationManager.AppSettings["isDemo"] != "Y")
@@ -189,7 +190,7 @@ namespace nModBusWeb
                 //==============================================================================
                 //BC_TextChanged
                 //==============================================================================
-                if (txtBC.Text.Trim().ToUpper().Equals("SUBMIT")) { submitCommand(); return; }
+                if (txtBC.Text.Trim().ToUpper().Equals("CONFIRM")) { submitCommand(); return; }
                 if (txtBC.Text.Trim().ToUpper().Equals("CANCEL")) { cancelCommand(); return; }
 
                 txtAdhesive.Text = func.getAdhesiveFromIntrack(txtBC.Text.Trim().ToUpper());
