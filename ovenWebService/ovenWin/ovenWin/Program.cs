@@ -25,7 +25,15 @@ namespace ovenWin
         static private string Batch_NO;
         static private double ScanTime,bakeTime, LimitTemp, LimitPressure, bakeTime2, LimitTemp2, LimitPressure2;
         static private bool reachTemp = false, reachPress = false, reachTemp2 = false, reachPress2 = false;
+        static string maillist = "Db.prod@nxp.com;db.inst@nxp.com;db.rm@nxp.com;c.h.fang@nxp.com;howard.liu@nxp.com;h.f.fong@nxp.com;chien-chou.kuo@nxp.com;alan.kuo@nxp.com";
+        static double control_Limit_Press = 0.5, control_Limit_Temp = 5;
 
+        //oven_assy_logkindid=0 => process done;
+        //oven_assy_logkindid=1 => pressure; 
+        //oven_assy_logkindid=2 => Temperature(CH1); 
+        //oven_assy_logkindid=3 => Temperature(CH2); 
+        //oven_assy_logkindid=4 => Temperature(CH3);
+        //oven_assy_logkindid=616~660 => exception code
         static void Main(string[] args)
         {
             try
@@ -124,38 +132,372 @@ namespace ovenWin
                 List<string> arrStr = new List<string>();
                 string transaction_str1 = "", transaction_str2 = "", transaction_str3 = "", transaction_str4 = "";
 
+                //==============================================================
+                //insert log (Pressure & CH1 CH2 CH3)
+                //over spec, warring letter
+                //==============================================================
+                double TempTarget = 0, PressTarget = 0;
+                #region Process1 Target value
+
+                if (bakeTime > StartTime)
+                {
+                    TempTarget = LimitTemp;
+                    PressTarget = LimitPressure;
+                }
+                #endregion
+                #region Process2 Target value
+
+                if ((bakeTime2 + bakeTime) > StartTime && bakeTime < StartTime)
+                {
+                    TempTarget = LimitTemp2;
+                    PressTarget = LimitPressure2;
+                }
+                #endregion
+
                 //Pressure
                 startAddress = fc.Pressure;
                 ushort[] register_Pressure = master.ReadHoldingRegisters(slaveID, startAddress, numOfPoints);
                 Console.WriteLine(string.Format(@"Pressure {1}十進位：{0}{1}十六進位：{2} {1}", register_Pressure[0].ToString(), Environment.NewLine, Convert.ToString(Convert.ToInt32(register_Pressure[0].ToString()), 16)));
-                transaction_str1 = string.Format(@"insert into oven_assy_log(oven_assy_logid,machine_ID,oven_Assy_logKindID,Time,Data,Batch_NO)
-                                                   values(oven_assy_log_sequence.nextval,'{0}','1',SYSDATE,'{1}','{2}')", Machine_ID, register_Pressure[0].ToString(), Batch_NO);
-                arrStr.Add(transaction_str1);
+                #region Process1 check control limit(Pressure)
+
+                if (bakeTime > StartTime)
+                {
+                    if (Convert.ToDouble(register_Pressure[0].ToString()) >= LimitPressure) { reachPress = true; }
+                    //Pressure正負0.5kg
+                    if (Convert.ToDouble(register_Pressure[0].ToString()) > (LimitPressure + control_Limit_Press))
+                    {
+                        mail(maillist, string.Format(@"The Pressure of oven exceeds the spec"));
+                        transaction_str1 = string.Format(@"insert into oven_assy_log(oven_assy_logid,machine_ID,oven_Assy_logKindID,Time,Batch_NO,Data,Target,control_Limit,isOverSpec)
+                                                   values(oven_assy_log_sequence.nextval,'{0}','1',SYSDATE,'{1}','{2}','{3}','{4}','Y')", Machine_ID,
+                                                                                                                                            Batch_NO, 
+                                                                                                                                            register_Pressure[0].ToString(), 
+                                                                                                                                            PressTarget,
+                                                                                                                                            control_Limit_Press);
+                        arrStr.Add(transaction_str1);
+                    }
+                    else if (reachPress == true && Convert.ToDouble(register_Pressure[0].ToString()) < (LimitPressure - control_Limit_Press))
+                    {
+                        mail(maillist, string.Format(@"The Pressure of oven not reach the spec"));
+                        transaction_str1 = string.Format(@"insert into oven_assy_log(oven_assy_logid,machine_ID,oven_Assy_logKindID,Time,Batch_NO,Data,Target,control_Limit,isOverSpec)
+                                                   values(oven_assy_log_sequence.nextval,'{0}','1',SYSDATE,'{1}','{2}','{3}','{4}','Y')", Machine_ID,
+                                                                                                                                          Batch_NO,
+                                                                                                                                          register_Pressure[0].ToString(),
+                                                                                                                                          PressTarget,
+                                                                                                                                          control_Limit_Press);
+                        arrStr.Add(transaction_str1);
+                    }
+                    else
+                    {
+                        transaction_str1 = string.Format(@"insert into oven_assy_log(oven_assy_logid,machine_ID,oven_Assy_logKindID,Time,Data,Batch_NO,target,control_limit,isOverSpec)
+                                                           values(oven_assy_log_sequence.nextval,'{0}','1',SYSDATE,'{1}','{2}','{3}','{4}','N')", Machine_ID,
+                                                                                                                                                  register_Pressure[0].ToString(),
+                                                                                                                                                  Batch_NO,
+                                                                                                                                                  PressTarget,
+                                                                                                                                                  control_Limit_Press);
+                        arrStr.Add(transaction_str1);
+                    }
+                }
+                #endregion
+                #region Process2 check control limit (Pressure)
+
+                if ((bakeTime2 + bakeTime) > StartTime && bakeTime < StartTime)
+                {
+                    if (Convert.ToDouble(register_Pressure[0].ToString()) >= LimitPressure2) { reachPress2 = true; }
+                    //Pressure正負0.5kg
+                    if (Convert.ToDouble(register_Pressure[0].ToString()) > (LimitPressure2 + control_Limit_Press))
+                    {
+                        mail(maillist, string.Format(@"The Pressure of oven exceeds the spec"));
+                        transaction_str1 = string.Format(@"insert into oven_assy_log(oven_assy_logid,machine_ID,oven_Assy_logKindID,Time,Batch_NO,Data,Target,control_Limit,isOverSpec)
+                                                           values(oven_assy_log_sequence.nextval,'{0}','1',SYSDATE,'{1}','{2}','{3}','{4}','Y')", Machine_ID,
+                                                                                                                                                  Batch_NO,
+                                                                                                                                                  register_Pressure[0].ToString(),
+                                                                                                                                                  PressTarget,
+                                                                                                                                                  control_Limit_Press);
+                        arrStr.Add(transaction_str1);
+                    }
+                    else if (reachPress2 == true && Convert.ToDouble(register_Pressure[0].ToString()) < (LimitPressure2 - control_Limit_Press))
+                    {
+                        mail(maillist, string.Format(@"The Pressure of oven not reach the spec"));
+                        transaction_str1 = string.Format(@"insert into oven_assy_log(oven_assy_logid,machine_ID,oven_Assy_logKindID,Time,Batch_NO,Data,Target,control_Limit,isOverSpec)
+                                                   values(oven_assy_log_sequence.nextval,'{0}','1',SYSDATE,'{1}','{2}','{3}','{4}','Y')", Machine_ID,
+                                                                                                                                          Batch_NO,
+                                                                                                                                          register_Pressure[0].ToString(),
+                                                                                                                                          PressTarget,
+                                                                                                                                          control_Limit_Press);
+                        arrStr.Add(transaction_str1);
+                    }
+                    else
+                    {
+                        transaction_str1 = string.Format(@"insert into oven_assy_log(oven_assy_logid,machine_ID,oven_Assy_logKindID,Time,Data,Batch_NO,target,control_Limit,isOverSpec)
+                                                           values(oven_assy_log_sequence.nextval,'{0}','1',SYSDATE,'{1}','{2}','{3}','{4}','N')", Machine_ID,
+                                                                                                                                                  register_Pressure[0].ToString(),
+                                                                                                                                                  Batch_NO,
+                                                                                                                                                  PressTarget,
+                                                                                                                                                  control_Limit_Press);
+                        arrStr.Add(transaction_str1);
+                    }
+                }
+                #endregion
 
                 //CH1
                 startAddress = fc.CH1;
                 ushort[] register_Ch1 = master.ReadHoldingRegisters(slaveID, startAddress, numOfPoints);
                 Console.WriteLine(string.Format(@"Temperature CH1 {1}十進位：{0}{1}十六進位：{2} {1}", register_Ch1[0].ToString(), Environment.NewLine, Convert.ToString(Convert.ToInt32(register_Ch1[0].ToString()), 16)));
-                transaction_str2 = string.Format(@"insert into oven_assy_log(oven_assy_logid,machine_ID,oven_Assy_logKindID,Time,Data,Batch_NO)
-                                                   values(oven_assy_log_sequence.nextval,'{0}','2',SYSDATE,'{1}','{2}')", Machine_ID, register_Ch1[0].ToString(),Batch_NO);
-                arrStr.Add(transaction_str2);
+                #region Process1 check control limit(CH1)
+
+                if (bakeTime > StartTime)
+                {
+                    if (Convert.ToDouble(register_Ch1[0].ToString()) >= LimitTemp) { reachTemp = true; }
+
+                    //溫度正負五度
+                    if (Convert.ToDouble(register_Ch1[0].ToString()) > (LimitTemp + control_Limit_Temp))
+                    {
+                        mail(maillist, string.Format(@"The Temperature(CH1) of oven exceeds the spec"));
+                        transaction_str2 = string.Format(@"insert into oven_assy_log(oven_assy_logid,machine_ID,oven_Assy_logKindID,Time,Batch_NO,Data,Target,control_Limit,isOverSpec)
+                                                   values(oven_assy_log_sequence.nextval,'{0}','2',SYSDATE,'{1}','{2}','{3}','{4}','Y')", Machine_ID,
+                                                                                                                                          Batch_NO,
+                                                                                                                                          register_Ch1[0].ToString(),
+                                                                                                                                          TempTarget,
+                                                                                                                                          control_Limit_Temp);
+                        arrStr.Add(transaction_str2);
+                    }
+                    else if (reachTemp == true && Convert.ToDouble(register_Ch1[0].ToString()) < (LimitTemp - control_Limit_Temp))
+                    {
+                        mail(maillist, string.Format(@"The Temperature(CH1) of oven not reach the spec"));
+                        transaction_str2 = string.Format(@"insert into oven_assy_log(oven_assy_logid,machine_ID,oven_Assy_logKindID,Time,Batch_NO,Data,Target,control_Limit,isOverSpec)
+                                                   values(oven_assy_log_sequence.nextval,'{0}','2',SYSDATE,'{1}','{2}','{3}','{4}','Y')", Machine_ID,
+                                                                                                                                          Batch_NO,
+                                                                                                                                          register_Ch1[0].ToString(),
+                                                                                                                                          TempTarget,
+                                                                                                                                          control_Limit_Temp);
+                        arrStr.Add(transaction_str2);
+                    }
+                    else
+                    {
+                        transaction_str2 = string.Format(@"insert into oven_assy_log(oven_assy_logid,machine_ID,oven_Assy_logKindID,Time,Data,Batch_NO,target,control_Limit,isOverSpec)
+                                                   values(oven_assy_log_sequence.nextval,'{0}','2',SYSDATE,'{1}','{2}','{3}','{4}','N')", Machine_ID,
+                                                                                                                                          register_Ch1[0].ToString(),
+                                                                                                                                          Batch_NO,
+                                                                                                                                          TempTarget,
+                                                                                                                                          control_Limit_Temp);
+                        arrStr.Add(transaction_str2);
+                    }
+                }
+                #endregion
+                #region Process2 check control limit(CH1)
+
+                if ((bakeTime2 + bakeTime) > StartTime && bakeTime < StartTime)
+                {
+                    if (Convert.ToDouble(register_Ch1[0].ToString()) >= LimitTemp2) { reachTemp2 = true; }
+                    //溫度正負五度
+                    if (Convert.ToDouble(register_Ch1[0].ToString()) > (LimitTemp2 + control_Limit_Temp))
+                    {
+                        mail(maillist, string.Format(@"The Temperature(CH1) of oven exceeds the spec"));
+                        transaction_str2 = string.Format(@"insert into oven_assy_log(oven_assy_logid,machine_ID,oven_Assy_logKindID,Time,Batch_NO,Data,Target,control_Limit,isOverSpec)
+                                                   values(oven_assy_log_sequence.nextval,'{0}','2',SYSDATE,'{1}','{2}','{3}','{4}','Y')", Machine_ID,
+                                                                                                                                          Batch_NO,
+                                                                                                                                          register_Ch1[0].ToString(),
+                                                                                                                                          TempTarget,
+                                                                                                                                          control_Limit_Temp);
+                        arrStr.Add(transaction_str2);
+                    }
+                    else if (reachTemp2 == true && Convert.ToDouble(register_Ch1[0].ToString()) < (LimitTemp2 - control_Limit_Temp))
+                    {
+                        mail(maillist, string.Format(@"The Temperature(CH1) of oven not reach the spec"));
+                        transaction_str2 = string.Format(@"insert into oven_assy_log(oven_assy_logid,machine_ID,oven_Assy_logKindID,Time,Batch_NO,Data,Target,control_Limit,isOverSpec)
+                                                   values(oven_assy_log_sequence.nextval,'{0}','2',SYSDATE,'{1}','{2}','{3}','{4}','Y')", Machine_ID,
+                                                                                                                                          Batch_NO,
+                                                                                                                                          register_Ch1[0].ToString(),
+                                                                                                                                          TempTarget,
+                                                                                                                                          control_Limit_Temp);
+                        arrStr.Add(transaction_str2);
+                    }
+                    else
+                    {
+                        transaction_str2 = string.Format(@"insert into oven_assy_log(oven_assy_logid,machine_ID,oven_Assy_logKindID,Time,Data,Batch_NO,target,control_Limit,isOverSpec)
+                                                           values(oven_assy_log_sequence.nextval,'{0}','2',SYSDATE,'{1}','{2}','{3}','{4}','N')", Machine_ID,
+                                                                                                                                                  register_Ch1[0].ToString(),
+                                                                                                                                                  Batch_NO,
+                                                                                                                                                  TempTarget,
+                                                                                                                                                  control_Limit_Temp);
+                        arrStr.Add(transaction_str2);
+                    }
+                }
+                #endregion
 
                 //CH2 
                 startAddress = fc.CH2;
                 ushort[] register_Ch2 = master.ReadHoldingRegisters(slaveID, startAddress, numOfPoints);
                 Console.WriteLine(string.Format(@"Temperature CH2 {1}十進位：{0}{1}十六進位：{2} {1}", register_Ch2[0].ToString(), Environment.NewLine, Convert.ToString(Convert.ToInt32(register_Ch2[0].ToString()), 16)));
-                transaction_str3 = string.Format(@"insert into oven_assy_log(oven_assy_logid,machine_ID,oven_Assy_logKindID,Time,Data,Batch_NO)
-                                                   values(oven_assy_log_sequence.nextval,'{0}','3',SYSDATE,'{1}','{2}')", Machine_ID, register_Ch2[0].ToString(),Batch_NO);
-                arrStr.Add(transaction_str3);
+                #region Process1 check control limit(CH2)
+
+                if (bakeTime > StartTime)
+                {
+                    if (Convert.ToDouble(register_Ch2[0].ToString()) >= LimitTemp) { reachTemp = true; }
+
+                    //溫度正負五度
+                    if (Convert.ToDouble(register_Ch2[0].ToString()) > (LimitTemp + control_Limit_Temp))
+                    {
+                        mail(maillist, string.Format(@"The Temperature(CH2) of oven exceeds the spec"));
+                        transaction_str3 = string.Format(@"insert into oven_assy_log(oven_assy_logid,machine_ID,oven_Assy_logKindID,Time,Batch_NO,Data,Target,control_Limit,isOverSpec)
+                                                   values(oven_assy_log_sequence.nextval,'{0}','3',SYSDATE,'{1}','{2}','{3}','{4}','Y')", Machine_ID,
+                                                                                                                                          Batch_NO,
+                                                                                                                                          register_Ch2[0].ToString(),
+                                                                                                                                          TempTarget,
+                                                                                                                                          control_Limit_Temp);
+                        arrStr.Add(transaction_str3);
+                    }
+                    else if (reachTemp == true && Convert.ToDouble(register_Ch2[0].ToString()) < (LimitTemp - control_Limit_Temp))
+                    {
+                        mail(maillist, string.Format(@"The Temperature(CH2) of oven not reach the spec"));
+                        transaction_str3 = string.Format(@"insert into oven_assy_log(oven_assy_logid,machine_ID,oven_Assy_logKindID,Time,Batch_NO,Data,Target,control_Limit,isOverSpec)
+                                                   values(oven_assy_log_sequence.nextval,'{0}','3',SYSDATE,'{1}','{2}','{3}','{4}','Y')", Machine_ID,
+                                                                                                                                          Batch_NO,
+                                                                                                                                          register_Ch2[0].ToString(),
+                                                                                                                                          TempTarget,
+                                                                                                                                          control_Limit_Temp);
+                        arrStr.Add(transaction_str3);
+                    }
+                    else
+                    {
+                        transaction_str3 = string.Format(@"insert into oven_assy_log(oven_assy_logid,machine_ID,oven_Assy_logKindID,Time,Data,Batch_NO,target,control_Limit,isOverSpec)
+                                                   values(oven_assy_log_sequence.nextval,'{0}','3',SYSDATE,'{1}','{2}','{3}','{4}','N')", Machine_ID,
+                                                                                                                                          register_Ch2[0].ToString(),
+                                                                                                                                          Batch_NO,
+                                                                                                                                          TempTarget,
+                                                                                                                                          control_Limit_Temp);
+                        arrStr.Add(transaction_str3);
+                    }
+                }
+                #endregion
+                #region Process2 check control limit(CH2)
+
+                if ((bakeTime2 + bakeTime) > StartTime && bakeTime < StartTime)
+                {
+                    if (Convert.ToDouble(register_Ch2[0].ToString()) >= LimitTemp2) { reachTemp2 = true; }
+                    //溫度正負五度
+                    if (Convert.ToDouble(register_Ch2[0].ToString()) > (LimitTemp2 + control_Limit_Temp))
+                    {
+                        mail(maillist, string.Format(@"The Temperature(CH2) of oven exceeds the spec"));
+                        transaction_str3 = string.Format(@"insert into oven_assy_log(oven_assy_logid,machine_ID,oven_Assy_logKindID,Time,Batch_NO,Data,Target,control_Limit,isOverSpec)
+                                                   values(oven_assy_log_sequence.nextval,'{0}','3',SYSDATE,'{1}','{2}','{3}','{4}','Y')", Machine_ID,
+                                                                                                                                          Batch_NO,
+                                                                                                                                          register_Ch2[0].ToString(),
+                                                                                                                                          TempTarget,
+                                                                                                                                          control_Limit_Temp);
+                        arrStr.Add(transaction_str3);
+                    }
+                    else if (reachTemp2 == true && Convert.ToDouble(register_Ch2[0].ToString()) < (LimitTemp2 - control_Limit_Temp))
+                    {
+                        mail(maillist, string.Format(@"The Temperature(CH2) of oven not reach the spec"));
+                        transaction_str3 = string.Format(@"insert into oven_assy_log(oven_assy_logid,machine_ID,oven_Assy_logKindID,Time,Batch_NO,Data,Target,control_Limit,isOverSpec)
+                                                   values(oven_assy_log_sequence.nextval,'{0}','3',SYSDATE,'{1}','{2}','{3}','{4}','Y')", Machine_ID,
+                                                                                                                                          Batch_NO,
+                                                                                                                                          register_Ch2[0].ToString(),
+                                                                                                                                          TempTarget,
+                                                                                                                                          control_Limit_Temp);
+                        arrStr.Add(transaction_str3);
+                    }
+                    else
+                    {
+                        transaction_str3 = string.Format(@"insert into oven_assy_log(oven_assy_logid,machine_ID,oven_Assy_logKindID,Time,Data,Batch_NO,target,control_Limit,isOverSpec)
+                                                           values(oven_assy_log_sequence.nextval,'{0}','3',SYSDATE,'{1}','{2}','{3}','{4}','N')", Machine_ID,
+                                                                                                                                                  register_Ch2[0].ToString(),
+                                                                                                                                                  Batch_NO,
+                                                                                                                                                  TempTarget,
+                                                                                                                                                  control_Limit_Temp);
+                        arrStr.Add(transaction_str3);
+                    }
+                }
+                #endregion
 
                 //最可靠溫度Ch3
                 startAddress = fc.Temperature;
                 ushort[] register_Temp = master.ReadHoldingRegisters(slaveID, startAddress, numOfPoints);
                 Console.WriteLine(string.Format(@"Temperature CH3 {1}十進位：{0}{1}十六進位：{2}{1}", register_Temp[0].ToString(), Environment.NewLine, Convert.ToString(Convert.ToInt32(register_Temp[0].ToString()), 16)));
-                transaction_str4 = string.Format(@"insert into oven_assy_log(oven_assy_logid,machine_ID,oven_Assy_logKindID,Time,Data,Batch_NO)
-                                                   values(oven_assy_log_sequence.nextval,'{0}','4',SYSDATE,'{1}','{2}')", Machine_ID, register_Temp[0].ToString(),Batch_NO);
-                arrStr.Add(transaction_str4);
+                #region Process1 check control limit(CH3)
 
+                if (bakeTime > StartTime)
+                {
+                    if (Convert.ToDouble(register_Temp[0].ToString()) >= LimitTemp) { reachTemp = true; }
+
+                    //溫度正負五度
+                    if (Convert.ToDouble(register_Temp[0].ToString()) > (LimitTemp + control_Limit_Temp))
+                    {
+                        mail(maillist, string.Format(@"The Temperature(CH3) of oven exceeds the spec"));
+                        transaction_str4 = string.Format(@"insert into oven_assy_log(oven_assy_logid,machine_ID,oven_Assy_logKindID,Time,Batch_NO,Data,Target,control_Limit,isOverSpec)
+                                                   values(oven_assy_log_sequence.nextval,'{0}','4',SYSDATE,'{1}','{2}','{3}','{4}','Y')", Machine_ID,
+                                                                                                                                          Batch_NO,
+                                                                                                                                          register_Temp[0].ToString(),
+                                                                                                                                          TempTarget,
+                                                                                                                                          control_Limit_Temp);
+                        arrStr.Add(transaction_str4);
+                    }
+                    else if (reachTemp == true && Convert.ToDouble(register_Temp[0].ToString()) < (LimitTemp - control_Limit_Temp))
+                    {
+                        mail(maillist, string.Format(@"The Temperature(CH3) of oven not reach the spec"));
+                        transaction_str4 = string.Format(@"insert into oven_assy_log(oven_assy_logid,machine_ID,oven_Assy_logKindID,Time,Batch_NO,Data,Target,control_Limit,isOverSpec)
+                                                   values(oven_assy_log_sequence.nextval,'{0}','4',SYSDATE,'{1}','{2}','{3}','{4}','Y')", Machine_ID,
+                                                                                                                                          Batch_NO,
+                                                                                                                                          register_Temp[0].ToString(),
+                                                                                                                                          TempTarget,
+                                                                                                                                          control_Limit_Temp);
+                        arrStr.Add(transaction_str4);
+                    }
+                    else
+                    {
+                        transaction_str4 = string.Format(@"insert into oven_assy_log(oven_assy_logid,machine_ID,oven_Assy_logKindID,Time,Data,Batch_NO,target,control_Limit,isOverSpec)
+                                                   values(oven_assy_log_sequence.nextval,'{0}','4',SYSDATE,'{1}','{2}','{3}','{4}','N')", Machine_ID,
+                                                                                                                                          register_Temp[0].ToString(),
+                                                                                                                                          Batch_NO,
+                                                                                                                                          TempTarget,
+                                                                                                                                          control_Limit_Temp);
+                        arrStr.Add(transaction_str4);
+                    }
+                }
+                #endregion
+                #region Process2 check control limit(CH3)
+
+                if ((bakeTime2 + bakeTime) > StartTime && bakeTime < StartTime)
+                {
+                    if (Convert.ToDouble(register_Temp[0].ToString()) >= LimitTemp2) { reachTemp2 = true; }
+                    //溫度正負五度
+                    if (Convert.ToDouble(register_Temp[0].ToString()) > (LimitTemp2 + control_Limit_Temp))
+                    {
+                        mail(maillist, string.Format(@"The Temperature(CH3) of oven exceeds the spec"));
+                        transaction_str4 = string.Format(@"insert into oven_assy_log(oven_assy_logid,machine_ID,oven_Assy_logKindID,Time,Batch_NO,Data,Target,control_Limit,isOverSpec)
+                                                   values(oven_assy_log_sequence.nextval,'{0}','4',SYSDATE,'{1}','{2}','{3}','{4}','Y')", Machine_ID,
+                                                                                                                                          Batch_NO,
+                                                                                                                                          register_Temp[0].ToString(),
+                                                                                                                                          TempTarget,
+                                                                                                                                          control_Limit_Temp);
+                        arrStr.Add(transaction_str4); 
+                    }
+                    else if (reachTemp2 == true && Convert.ToDouble(register_Temp[0].ToString()) < (LimitTemp2 - control_Limit_Temp))
+                    {
+                        mail(maillist, string.Format(@"The Temperature(CH3) of oven not reach the spec"));
+                        transaction_str4 = string.Format(@"insert into oven_assy_log(oven_assy_logid,machine_ID,oven_Assy_logKindID,Time,Batch_NO,Data,Target,control_Limit,isOverSpec)
+                                                   values(oven_assy_log_sequence.nextval,'{0}','4',SYSDATE,'{1}','{2}','{3}','{4}','Y')", Machine_ID,
+                                                                                                                                          Batch_NO, 
+                                                                                                                                          register_Temp[0].ToString(), 
+                                                                                                                                          TempTarget,
+                                                                                                                                          control_Limit_Temp);
+                        arrStr.Add(transaction_str4); 
+                    }
+                    else
+                    {
+                        transaction_str4 = string.Format(@"insert into oven_assy_log(oven_assy_logid,machine_ID,oven_Assy_logKindID,Time,Data,Batch_NO,target,control_Limit,isOverSpec)
+                                                           values(oven_assy_log_sequence.nextval,'{0}','4',SYSDATE,'{1}','{2}','{3}','{4}','N')", Machine_ID,
+                                                                                                                                                  register_Temp[0].ToString(),
+                                                                                                                                                  Batch_NO,
+                                                                                                                                                  TempTarget,
+                                                                                                                                                  control_Limit_Temp);
+                        arrStr.Add(transaction_str4);                        
+                    }
+                }
+                #endregion
+
+                //commit
                 string reStr = ado.SQL_transaction(arrStr, Conn);
                 if (reStr.ToUpper().Contains("SUCCESS"))
                 {
@@ -165,42 +507,7 @@ namespace ovenWin
                     Console.WriteLine
                         (string.Format(@"{0} data insert error.", DateTime.Now.ToString()));
 
-                //==============================================================
-                //over spec, warring letter
-                //==============================================================
-                #region Process1
                 
-                if (bakeTime > StartTime)
-                {
-                    if (Convert.ToDouble(register_Temp[0].ToString()) >= LimitTemp) { reachTemp = true; }
-                    if (Convert.ToDouble(register_Pressure[0].ToString()) >= LimitPressure) { reachPress = true; }
-
-                    //溫度正負五度
-                    if (Convert.ToDouble(register_Temp[0].ToString()) > (LimitTemp + 5)) { mail("Alan.Kuo@nxp.com", string.Format(@"The Temperature of oven exceeds the spec")); }
-                    if (reachTemp == true && Convert.ToDouble(register_Temp[0].ToString()) < (LimitTemp - 5)) { mail("Alan@Kuo@nxp.com", string.Format(@"The Temperature of oven not reach the spec")); }
-
-                    //Pressure正負0.5kg
-                    if (Convert.ToDouble(register_Pressure[0].ToString()) > (LimitPressure + 0.5)) { mail("Alan.Kuo@nxp.com", string.Format(@"The Pressure of oven exceeds the spec")); }
-                    if (reachPress == true && Convert.ToDouble(register_Pressure[0].ToString()) < (LimitPressure - 0.5)) { mail("Alan@Kuo@nxp.com", string.Format(@"The Pressure of oven not reach the spec")); }
-                }
-                #endregion
-                #region Process2
-
-                if (bakeTime2 > StartTime && bakeTime < StartTime)
-                {
-                    if (Convert.ToDouble(register_Temp[0].ToString()) >= LimitTemp2) { reachTemp2 = true; }
-                    if (Convert.ToDouble(register_Pressure[0].ToString()) >= LimitPressure2) { reachPress2 = true; }
-
-                    //溫度正負五度
-                    if (Convert.ToDouble(register_Temp[0].ToString()) > (LimitTemp2 + 5)) { mail("Alan.Kuo@nxp.com", string.Format(@"The Temperature of oven exceeds the spec")); }
-                    if (reachTemp2 == true && Convert.ToDouble(register_Temp[0].ToString()) < (LimitTemp2 - 5)) { mail("Alan.Kuo@nxp.com", string.Format(@"The Temperature of oven not reach the spec")); }
-
-                    //Pressure正負0.5kg
-                    if (Convert.ToDouble(register_Pressure[0].ToString()) > (LimitPressure2 + 0.5)) { mail("Alan.Kuo@nxp.com", string.Format(@"The Pressure of oven exceeds the spec")); }
-                    if (reachPress2 == true && Convert.ToDouble(register_Pressure[0].ToString()) < (LimitPressure2 - 0.5)) { mail("Alan.Kuo@nxp.com", string.Format(@"The Pressure of oven not reach the spec")); }
-                }
-                #endregion
-
                 //==============================================================
                 //error code check for machine monitor(Uniga offer),
                 //and check the status of the oven(fc.Terminate),
@@ -230,13 +537,15 @@ namespace ovenWin
                     bool[] register_ErrorCode = master.ReadCoils(slaveID, startAddress, numOfPoints);
                     if (register_ErrorCode[0] == true)
                     {
-                        timerStop = true;                        
+                        timerStop = true;
                         transaction_error = string.Format(@"insert into oven_assy_log(oven_assy_logid,machine_ID,oven_Assy_logKindID,Time,Batch_NO)
-                                                   values(oven_assy_log_sequence.nextval,'{0}','{1}',SYSDATE,'{2}')", Machine_ID, item[1].ToString(), Batch_NO);
+                                                   values(oven_assy_log_sequence.nextval,'{0}','{1}',SYSDATE,'{2}')", Machine_ID,
+                                                                                                                      item[1].ToString(),
+                                                                                                                      Batch_NO);
                         stopStr.Add(transaction_error);
-                        transaction_stop = string.Format(@"insert into oven_assy_log(oven_assy_logid,machine_ID,oven_Assy_logKindID,Time,Batch_NO)
-                                                   values(oven_assy_log_sequence.nextval,'{0}','999',SYSDATE,'{1}')", Machine_ID, Batch_NO);
-                        stopStr.Add(transaction_stop);
+//                        transaction_stop = string.Format(@"insert into oven_assy_log(oven_assy_logid,machine_ID,oven_Assy_logKindID,Time,Batch_NO)
+//                                                   values(oven_assy_log_sequence.nextval,'{0}','999',SYSDATE,'{1}')", Machine_ID, Batch_NO);
+//                        stopStr.Add(transaction_stop);
                         string stopResult = ado.SQL_transaction(stopStr, Conn);
                         if (stopResult.ToUpper().Contains("SUCCESS"))
                         {
@@ -429,33 +738,38 @@ namespace ovenWin
 
         static void mail(string contact, string mail_data)
         {
-             string title = "Pressure Oven System Fail";
-            using (OracleConnection connection = new OracleConnection(ovenWin.Properties.Settings.Default.MAIL))
+            foreach (string _contact in contact.Split(';'))
             {
-                connection.Open();
-                OracleCommand command = connection.CreateCommand();
-                OracleTransaction transaction;
-                transaction = connection.BeginTransaction(IsolationLevel.ReadCommitted);
-                command.Transaction = transaction;
-                try
+                string title = "Pressure Oven System Fail";
+                using (OracleConnection connection = new OracleConnection(ovenWin.Properties.Settings.Default.MAIL))
                 {
-                    command.CommandText = "select seq_mail_id.nextval from dual";
-                    int mail_id = Convert.ToInt32(command.ExecuteScalar());
-                    command.CommandText = "insert into mail_pool (id,from_name,disable,datetime_in,send_period,mail_to,mail_cc,mail_subject,datetime_exp,exclusive_flag,check_sum,html_body) " +
-                    "values (" + mail_id + ",'Pressure Oven System mail agent',0,sysdate,0,'" + contact + "',null,'" + title + "',sysdate+1,0,null,1)";
-                    command.ExecuteNonQuery();
+                    connection.Open();
+                    OracleCommand command = connection.CreateCommand();
+                    OracleTransaction transaction;
+                    transaction = connection.BeginTransaction(IsolationLevel.ReadCommitted);
+                    command.Transaction = transaction;
+                    try
+                    {
+                        command.CommandText = "select seq_mail_id.nextval from dual";
+                        int mail_id = Convert.ToInt32(command.ExecuteScalar());
+                        command.CommandText = "insert into mail_pool (id,from_name,disable,datetime_in,send_period,mail_to,mail_cc,mail_subject,datetime_exp,exclusive_flag,check_sum,html_body) " +
+                        "values (" + mail_id + ",'Pressure Oven System mail agent',0,sysdate,0,'" + _contact + "',null,'" + title + "',sysdate+1,0,null,1)";
+                        command.ExecuteNonQuery();
 
-                    command.CommandText = "insert into mail_body (id,sn,mail_cont) values (" + mail_id + ",1,'" + mail_data + "')";
-                    command.ExecuteNonQuery();
-                    transaction.Commit();
+                        command.CommandText = "insert into mail_body (id,sn,mail_cont) values (" + mail_id + ",1,'" + mail_data + "')";
+                        command.ExecuteNonQuery();
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        //msg.Text = ex.ToString();
+                    }
                 }
-                catch (Exception ex)
-                {
-                    transaction.Rollback();
-                    //msg.Text = ex.ToString();
-                }
-            }
+            }//end foreach
+            
         }
+
 
     }
 }
