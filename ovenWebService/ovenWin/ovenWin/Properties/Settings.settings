@@ -2,13 +2,6 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ovenWin.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="Oven" Type="(Connection string)" Scope="Application">
-      <DesignTimeValue Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
-&lt;SerializableConnectionString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
-  &lt;ConnectionString&gt;User Id=spare_part;Password=spare!!part;Data Source=AUTO&lt;/ConnectionString&gt;
-&lt;/SerializableConnectionString&gt;</DesignTimeValue>
-      <Value Profile="(Default)">User Id=spare_part;Password=spare!!part;Data Source=AUTO</Value>
-    </Setting>
     <Setting Name="MAIL" Type="(Connection string)" Scope="Application">
       <DesignTimeValue Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
 &lt;SerializableConnectionString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
@@ -22,6 +15,13 @@
   &lt;ConnectionString&gt;User Id=oven_sys;Password=oven!!;Data Source=AUTO&lt;/ConnectionString&gt;
 &lt;/SerializableConnectionString&gt;</DesignTimeValue>
       <Value Profile="(Default)">User Id=oven_sys;Password=oven!!;Data Source=AUTO</Value>
+    </Setting>
+    <Setting Name="Oven" Type="(Connection string)" Scope="Application">
+      <DesignTimeValue Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
+&lt;SerializableConnectionString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
+  &lt;ConnectionString&gt;User Id=spare_part;Password=spare!!part;Data Source=AUTO&lt;/ConnectionString&gt;
+&lt;/SerializableConnectionString&gt;</DesignTimeValue>
+      <Value Profile="(Default)">User Id=spare_part;Password=spare!!part;Data Source=AUTO</Value>
     </Setting>
   </Settings>
 </SettingsFile>

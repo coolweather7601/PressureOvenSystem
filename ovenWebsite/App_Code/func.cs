@@ -5,6 +5,11 @@ using System.Data;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
+//step1. reference nmodbuspc.dll, and using the namespaces
+using Modbus.Device;      //for modbus master
+using System.IO.Ports;    //for controlling serial ports
+using System.Net.Sockets;
+using System.Data;
 
 namespace nModBusWeb.App_Code
 {
@@ -21,8 +26,14 @@ namespace nModBusWeb.App_Code
         /// <returns>Adhesive</returns>
         public string getAdhesiveFromIntrack(string batchNo)
         {            
-            apkvm1013.Service sfc = new apkvm1013.Service();            
-            string Adhesive = sfc.getCompleteLotData(batchNo.ToUpper()).Adhesive.ToString();
+            apkvm1013.Service sfc = new apkvm1013.Service();
+            string Adhesive="";
+            foreach (string bc in batchNo.ToUpper().Split(','))
+            {
+                if (!string.IsNullOrEmpty(bc))
+                    Adhesive = sfc.getCompleteLotData(batchNo.ToUpper()).Adhesive.ToString();
+            } 
+            
             return Adhesive;
         }
 
@@ -272,6 +283,156 @@ namespace nModBusWeb.App_Code
                 dt_new.Rows.Add(dr_new);
             }
             return dt_new;
+        }
+
+
+        //==================================================================================================
+        //modbus
+        //==================================================================================================
+        /// <summary>
+        ///get parameters from oven by modbu, return datatable
+        /// </summary>
+        public DataTable getOvenParameters(string comport)
+        {
+            DataTable dt = new DataTable();            
+            ModbusSerialMaster master;
+            // create a new SerialPort object with default settings.
+            SerialPort serialPort = new SerialPort(); ;
+
+            try
+            {             
+                // set the appropriate properties.
+                serialPort.PortName = comport;
+
+                serialPort.BaudRate = 9600;
+                serialPort.Parity = Parity.None;
+                serialPort.StopBits = StopBits.One;
+                serialPort.DataBits = 8;
+
+                serialPort.Open();
+                // create Modbus RTU Master by the comport client
+                //document->Modbus.Device.Namespace->ModbusSerialMaster Class->CreateRtu Method
+                master = ModbusSerialMaster.CreateRtu(serialPort);
+
+                byte slaveID = 1;
+                master.Transport.ReadTimeout = 300;
+                ushort numOfPoints = 8;
+
+                App_Code.FunctionCode fc = new App_Code.FunctionCode();
+
+                //===============================================================================
+                //First Parameters
+                //===============================================================================
+                ushort[] register_Process_1 = master.ReadHoldingRegisters(slaveID, fc.firstProcess, numOfPoints);
+                ushort[] register_Hour_1 = master.ReadHoldingRegisters(slaveID, fc.firstHour, numOfPoints);
+                ushort[] register_Min_1 = master.ReadHoldingRegisters(slaveID, fc.firstMin, numOfPoints);
+                ushort[] register_Temperature_1 = master.ReadHoldingRegisters(slaveID, fc.firstTemperature, numOfPoints);
+                ushort[] register_Pressure_1 = master.ReadHoldingRegisters(slaveID, fc.firstPressure, numOfPoints);
+
+                //===============================================================================
+                //Second Parameters
+                //===============================================================================
+                ushort[] register_Process_2 = master.ReadHoldingRegisters(slaveID, fc.secondProcess, numOfPoints);
+                ushort[] register_Hour_2 = master.ReadHoldingRegisters(slaveID, fc.secondHour, numOfPoints);
+                ushort[] register_Min_2 = master.ReadHoldingRegisters(slaveID, fc.secondMin, numOfPoints);
+                ushort[] register_Temperature_2 = master.ReadHoldingRegisters(slaveID, fc.secondTemperature, numOfPoints);
+                ushort[] register_Pressure_2 = master.ReadHoldingRegisters(slaveID, fc.secondPressure, numOfPoints);
+
+
+                //===============================================================================
+                //Create new DataTable
+                //===============================================================================
+                dt.Columns.Add("Process_1");
+                dt.Columns.Add("Hour_1");
+                dt.Columns.Add("Min_1");
+                dt.Columns.Add("Temperature_1");
+                dt.Columns.Add("Pressure_1");
+                dt.Columns.Add("Process_2");
+                dt.Columns.Add("Hour_2");
+                dt.Columns.Add("Min_2");
+                dt.Columns.Add("Temperature_2");
+                dt.Columns.Add("Pressure_2");
+                DataRow dr = dt.NewRow();
+                dr[0] = register_Process_1[0].ToString();
+                dr[1] = register_Hour_1[0].ToString();
+                dr[2] = register_Min_1[0].ToString();
+                dr[3] = register_Temperature_1[0].ToString();
+                dr[4] = register_Pressure_1[0].ToString();
+
+                dr[5] = register_Process_2[0].ToString();
+                dr[6] = register_Hour_2[0].ToString();
+                dr[7] = register_Min_2[0].ToString();
+                dr[8] = register_Temperature_2[0].ToString();
+                dr[9] = register_Pressure_2[0].ToString();
+
+                dt.Rows.Add(dr);
+                serialPort.Close();
+            }
+            catch (Exception ex) { serialPort.Close(); Console.WriteLine(ex.ToString()); }
+            return dt;
+        }
+
+        /// <summary>
+        ///change oven mode by modbu, return result
+        /// </summary>
+        public string changeOvenMode(string comport)
+        {
+            string reMsg = "";
+            DataTable dt = new DataTable();
+            ModbusSerialMaster master;
+            // create a new SerialPort object with default settings.
+            SerialPort serialPort = new SerialPort(); ;
+
+            try
+            {
+                // set the appropriate properties.
+                serialPort.PortName = comport;
+
+                serialPort.BaudRate = 9600;
+                serialPort.Parity = Parity.None;
+                serialPort.StopBits = StopBits.One;
+                serialPort.DataBits = 8;
+
+                serialPort.Open();
+                // create Modbus RTU Master by the comport client
+                //document->Modbus.Device.Namespace->ModbusSerialMaster Class->CreateRtu Method
+                master = ModbusSerialMaster.CreateRtu(serialPort);
+
+                byte slaveID = 1;
+                master.Transport.ReadTimeout = 300;
+                ushort numOfPoints = 8;
+                
+                App_Code.FunctionCode fc = new App_Code.FunctionCode();
+                ushort startAddress = (ushort)Convert.ToInt32("");//wait for Oscar response
+
+                #region WriteSingleCoil(0x05)
+                bool[] Coil_status = master.ReadCoils(slaveID, startAddress, numOfPoints);
+
+                if (Coil_status[0] == true)//none auto mode  
+                {                                                      
+                    master.WriteSingleCoil(slaveID, (ushort)startAddress, false);//change to auto mode
+                    reMsg = "auto mode";
+                }
+                else//auto mode 
+                {                            
+                    master.WriteSingleCoil(slaveID, (ushort)startAddress, true);//change to none auto mode
+                    reMsg = "none auto mode";
+                }
+                #endregion
+
+                serialPort.Close();
+            }
+            catch (Exception ex) { serialPort.Close(); Console.WriteLine(ex.ToString()); reMsg = "error:" + ex.ToString(); }
+            return reMsg;
+        }
+
+        /// <summary>
+        /// call webservice auto scan oven param(ComPort/ Machine_ID/ TemperatureLimit/ PressureLimit/ TotalTime )
+        /// </summary>
+        public void callWebService(string parmes)
+        {
+            ovenWebservice.Service sfc = new ovenWebservice.Service();
+            string ovenWinPath = sfc.callConsole(parmes);
         }
     }
 }

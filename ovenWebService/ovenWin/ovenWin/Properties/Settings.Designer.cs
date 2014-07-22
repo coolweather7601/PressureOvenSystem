@@ -26,16 +26,6 @@ namespace ovenWin.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
-        [global::System.Configuration.DefaultSettingValueAttribute("User Id=spare_part;Password=spare!!part;Data Source=AUTO")]
-        public string Oven {
-            get {
-                return ((string)(this["Oven"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
         [global::System.Configuration.DefaultSettingValueAttribute("Data Source=MAIL;Persist Security Info=True;User ID=autotrs;Password=autotrs")]
         public string MAIL {
             get {
@@ -50,6 +40,16 @@ namespace ovenWin.Properties {
         public string Oven_Trial {
             get {
                 return ((string)(this["Oven_Trial"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
+        [global::System.Configuration.DefaultSettingValueAttribute("User Id=spare_part;Password=spare!!part;Data Source=AUTO")]
+        public string Oven {
+            get {
+                return ((string)(this["Oven"]));
             }
         }
     }

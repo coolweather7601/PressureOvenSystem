@@ -212,22 +212,10 @@ namespace nModBusWeb.App_Code
         #endregion
 
         //write
-        #region 選用爐訊號-01 06 0D 48 00 01
-        private ushort _Furnace = 3400;
-        /// <summary>
-        /// Write Furance(func. 06)
-        /// </summary>
-        public ushort Furnace
-        {
-            set { _Furnace = value; }
-            get { return _Furnace; }
-        }
-        #endregion
-
-        #region 啟動按鈕enable並閃爍-01 06 0D 5C 00 01
+        #region 啟動使用(系統允許設備可被執行操作)-01 05 0D 5C 00 01
         private ushort _OnBtnTwinkle = 3420;
         /// <summary>
-        /// Write ON Button Twinkle(func. 06)
+        /// Write ON Button Twinkle(func. 05)
         /// </summary>
         public ushort OnBtnTwinkle
         {
@@ -236,10 +224,10 @@ namespace nModBusWeb.App_Code
         }
         #endregion
 
-        #region 一般模式紅燈OFF-01 06 0D 70 00 01
+        #region 通訊模式切換-01 05 0D 70 00 01
         private ushort _RedLightOff = 3440;
         /// <summary>
-        /// Write Red Light Off(func. 06)
+        /// Write Red Light Off(func. 05)
         /// </summary>
         public ushort RedLightOff
         {
@@ -248,10 +236,10 @@ namespace nModBusWeb.App_Code
         }
         #endregion
 
-        #region 警報蜂鳴器ON-01 06 0D 84 00 01
+        #region 警報蜂鳴器ON-01 05 0D 84 00 01
         private ushort _AlarmON = 3460;
         /// <summary>
-        /// Write Alarm ON(func. 06)
+        /// Write Alarm ON(func. 05)
         /// </summary>
         public ushort AlarmON
         {
@@ -260,10 +248,10 @@ namespace nModBusWeb.App_Code
         }
         #endregion
 
-        #region 強制機台停止訊號-01 06 0D 98 00 01
+        #region 強制機台停止訊號-01 05 0D 98 00 01
         private ushort _StopMachine = 3480;
         /// <summary>
-        /// Write Stop Machine(func. 06)
+        /// Write Stop Machine(func. 05)
         /// </summary>
         public ushort StopMachine
         {

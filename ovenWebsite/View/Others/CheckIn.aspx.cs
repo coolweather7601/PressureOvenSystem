@@ -339,7 +339,7 @@ namespace nModBusWeb
                 //===============================================================================
 
                 //取出Parameters from oven                             
-                DataTable dt_ovenParameters = getOvenParameters(comport);
+                DataTable dt_ovenParameters = func.getOvenParameters(comport);
                 if (dt_ovenParameters.Rows.Count < 1) { ScriptManager.RegisterStartupScript(this, this.GetType(), "", string.Format(@"alert('can not read this oven 【{0}】parameters, Comport:{1}');", txtMachineID.Text.Trim().ToUpper(), comport), true); return; }
 
                 DataRow dr_bakeTime = dt_BakeTime.Rows[0];
